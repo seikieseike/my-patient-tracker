@@ -348,6 +348,7 @@ button:disabled {
   padding: 12px 14px 14px;
   display: grid;
   gap: 12px;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
 }
 
 .two-col {
@@ -639,6 +640,40 @@ button:disabled {
     margin-top: 8px;
     border-top: 1px solid rgba(0,0,0,0.05);
     padding-top: 8px;
+  }
+
+  /* Prevent zoom on focus and handle narrow forms */
+  input, select, textarea {
+    font-size: 16px !important; /* Safari needs 16px to not zoom */
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .row-actions {
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+
+  form.row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .row input[type="date"], 
+  .row input:not([type="date"]) {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .inline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 
