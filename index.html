@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Patient Tracker</title>
+    <!-- Mobile App Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Patient Tracker" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div>
+          <h1>Patient Tracker</h1>
+          <p class="subtitle">資料存在本機瀏覽器（localStorage），不使用資料庫。</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="ghost-btn" id="exportBtn" type="button">匯出 JSON</button>
+          <label class="ghost-btn file-btn">
+            匯入 JSON
+            <input id="importFile" type="file" accept="application/json" hidden />
+          </label>
+          <button class="danger-btn" id="resetBtn" type="button">清空資料</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="panel">
+        <h2>新增 attending</h2>
+        <form id="addAttendingForm" class="grid-form">
+          <label>
+            <span>名稱</span>
+            <input name="name" autocomplete="off" required placeholder="例如：Dr. Chen" />
+          </label>
+          <div class="form-actions">
+            <button type="submit">新增</button>
+          </div>
+        </form>
+        <p class="hint">提示：attending 會在下方以分區顯示，你可以在各分區新增病人。</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>首頁（依 attending 分區）</h2>
+          <div class="panel-tools">
+            <input
+              id="searchInput"
+              class="search"
+              placeholder="搜尋：姓名 / 病歷號 / 床號 / attending / antibiotics"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div id="attendingSections" class="attending-sections"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          目前沒有任何 attending。請先在上方新增。
+        </div>
+      </section>
+    </main>
+
+    <dialog id="jsonDialog" class="json-dialog">
+      <form method="dialog" class="json-dialog-inner">
+        <div class="json-dialog-header">
+          <h3>匯出 JSON</h3>
+          <button class="ghost-btn" value="cancel" type="submit">關閉</button>
+        </div>
+        <textarea id="jsonOutput" readonly></textarea>
+        <div class="json-dialog-footer">
+          <button id="copyJsonBtn" class="ghost-btn" type="button">複製</button>
+          <button class="ghost-btn" value="cancel" type="submit">完成</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
