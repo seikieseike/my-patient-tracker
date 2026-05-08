@@ -72,8 +72,17 @@
         </div>
         <textarea id="jsonOutput" readonly></textarea>
         <div class="json-dialog-footer">
-          <button id="copyJsonBtn" class="ghost-btn" type="button">複製</button>
-          <button class="ghost-btn" value="cancel" type="submit">完成</button>
+          <button id="downloadJsonBtn" class="ghost-btn" type="button">下載檔案</button>
+          <button id="copyJsonBtn" class="ghost-btn" type="button">複製文字</button>
+          <button class="ghost-btn" value="cancel" type="submit">關閉</button>
+        </div>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);" />
+        <div class="json-dialog-header">
+          <h3>貼上文字還原</h3>
+        </div>
+        <textarea id="jsonInputArea" placeholder="將之前複製的備份文字貼在這裡..."></textarea>
+        <div class="json-dialog-footer">
+          <button id="pasteImportBtn" class="primary-btn" type="button" style="background: var(--primary); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">確認貼上並還原</button>
         </div>
       </form>
     </dialog>

@@ -573,13 +573,23 @@ button:disabled {
   font-size: 14px;
 }
 
-#jsonOutput {
+#jsonOutput, #jsonInputArea {
   width: 100%;
-  min-height: 320px;
+  min-height: 200px;
   margin-top: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
   font-size: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--soft);
+}
+
+#jsonInputArea {
+  min-height: 120px;
+  background: #fff;
+  border: 1px solid var(--primary);
 }
 
 .json-dialog-footer {

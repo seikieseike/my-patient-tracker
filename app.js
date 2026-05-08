@@ -1117,12 +1117,45 @@ copyJsonBtn.addEventListener("click", async () => {
     await navigator.clipboard.writeText(jsonOutput.value || "");
     copyJsonBtn.textContent = "已複製";
     setTimeout(() => {
-      copyJsonBtn.textContent = "複製";
+      copyJsonBtn.textContent = "複製文字";
     }, 900);
   } catch {
     jsonOutput.focus();
     jsonOutput.select();
     document.execCommand("copy");
+  }
+});
+
+downloadJsonBtn.addEventListener("click", () => {
+  const content = jsonOutput.value;
+  const blob = new Blob([content], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `patient_tracker_backup_${todayYmd()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+pasteImportBtn.addEventListener("click", () => {
+  const text = jsonInputArea.value.trim();
+  if (!text) return;
+  try {
+    const parsed = JSON.parse(text);
+    if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.attendings)) {
+      alert("JSON 格式不正確：需要 { attendings: [...] }");
+      return;
+    }
+    const ok = confirm("這將會覆蓋目前的資料，確定嗎？");
+    if (!ok) return;
+    state = { attendings: parsed.attendings };
+    expandedPatients.clear();
+    saveState();
+    render();
+    jsonInputArea.value = "";
+    if (typeof jsonDialog.close === "function") jsonDialog.close();
+  } catch {
+    alert("解析文字失敗，請確保貼上的是完整的備份內容。");
   }
 });
 
