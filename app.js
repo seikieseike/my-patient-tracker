@@ -142,7 +142,10 @@ let editingPatientInfoId = null;
 let dischargingPatientId = null;
 
 /** @type {boolean} */
-let isViewMode = false;
+let isViewMode = true;
+
+/** @type {boolean} */
+let isAddAttendingVisible = false;
 
 /** @type {Set<string>} */
 const expandedDischargedAttendings = new Set();
@@ -624,7 +627,7 @@ function render() {
 
   const addAttendingSection = document.getElementById("addAttendingSection");
   if (addAttendingSection) {
-    addAttendingSection.style.display = isViewMode ? "none" : "block";
+    addAttendingSection.style.display = isAddAttendingVisible ? "block" : "none";
   }
 
   if (attendings.length === 0) {
@@ -711,7 +714,6 @@ function render() {
                 <div class="discharged-section">
                   <button class="discharged-header" data-action="toggleDischarged" data-att="${att.id}">
                     <span class="section-title">已出院病人 (${dischargedPatients.length})</span>
-                    <span class="chev">${expandedDischargedAttendings.has(att.id) ? "收合" : "展開"}</span>
                   </button>
                   ${
                     expandedDischargedAttendings.has(att.id)
@@ -746,10 +748,19 @@ addAttendingForm.addEventListener("submit", (e) => {
     name,
     patients: []
   });
+  isAddAttendingVisible = false;
   saveState();
   form.reset();
   render();
 });
+
+const toggleAddAttendingBtn = document.getElementById("toggleAddAttendingBtn");
+if (toggleAddAttendingBtn) {
+  toggleAddAttendingBtn.addEventListener("click", () => {
+    isAddAttendingVisible = !isAddAttendingVisible;
+    render();
+  });
+}
 
 searchInput.addEventListener("input", () => render());
 

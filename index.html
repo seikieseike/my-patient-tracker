@@ -18,6 +18,7 @@
           <h1>Patient list</h1>
         </div>
         <div class="topbar-actions">
+          <button class="ghost-btn icon-btn" id="toggleAddAttendingBtn" type="button" title="新增 Attending">🧑‍⚕️</button>
           <button class="ghost-btn icon-btn" id="modeToggleBtn" type="button" title="切換模式">👁️</button>
           <button class="ghost-btn icon-btn" id="exportBtn" type="button" title="匯出 JSON">📤</button>
           <label class="ghost-btn file-btn icon-btn" title="匯入 JSON">
@@ -44,7 +45,7 @@
             <button type="submit">新增</button>
           </div>
         </form>
-        <p class="hint">提示：attending 會在下方以分區顯示，你可以在各分區新增病人。</p>
+        <p class="hint" style="display:none;"></p>
       </section>
 
       <section class="panel">
