@@ -141,6 +141,12 @@ let editingPatientInfoId = null;
 /** @type {string | null} */
 let dischargingPatientId = null;
 
+/** @type {boolean} */
+let isViewMode = false;
+
+/** @type {Set<string>} */
+const expandedDischargedAttendings = new Set();
+
 function formatDateShort(dateStr) {
   if (!dateStr) return "?";
   const parts = dateStr.split("-");
@@ -316,23 +322,22 @@ function renderPatientItem(p, att, today, q) {
 
   const todosHtml = p.todos
     .map((t, idx) => {
-      const isEditing = !!editingTodo && editingTodo.patientId === p.id && editingTodo.idx === idx;
+      const isEditing = !isViewMode && !!editingTodo && editingTodo.patientId === p.id && editingTodo.idx === idx;
       if (isEditing) {
         return `
           <form class="row" data-action="editTodoForm" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">
             <input name="text" value="${escapeHtml(t)}" autocomplete="off" required />
             <button type="submit">儲存</button>
             <button type="button" class="mini-ghost" data-action="cancelEditTodo">取消</button>
+            <button type="button" class="mini-danger" data-action="delTodo" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">刪除</button>
           </form>
         `;
       }
       return `
-        <div class="row">
-          <div class="row-main">${escapeHtml(t)}</div>
-          <div class="row-actions">
-            <button type="button" class="mini-ghost" data-action="startEditTodo" data-p="${p.id}" data-idx="${idx}">編輯</button>
-            <button type="button" class="mini-danger" data-action="delTodo" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">刪除</button>
-          </div>
+        <div class="row ${isViewMode ? "view-row" : ""}">
+          <div class="row-main ${isViewMode ? "" : "clickable"}" ${
+        isViewMode ? "" : `data-action="startEditTodo" data-p="${p.id}" data-idx="${idx}"`
+      }>${escapeHtml(t)}</div>
         </div>
       `;
     })
@@ -349,7 +354,7 @@ function renderPatientItem(p, att, today, q) {
       const active = isActiveAbx(a, today);
       const expired = isExpiredAbx(a, today);
       const cls = expired ? "abx-expired" : active ? "abx-active" : "";
-      const isEditing = editingAbxId === a.id;
+      const isEditing = !isViewMode && editingAbxId === a.id;
 
       if (isEditing) {
         return `
@@ -368,9 +373,9 @@ function renderPatientItem(p, att, today, q) {
       const end = formatDateShort(a.endDate);
       return `
         <div class="row ${cls}">
-          <div class="row-main abx-name clickable" data-action="startEditAbx" data-abx="${a.id}">
-            ${escapeHtml(a.name)}(${escapeHtml(start)}-${escapeHtml(end)})
-          </div>
+          <div class="row-main abx-name ${isViewMode ? "" : "clickable"}" ${
+        isViewMode ? "" : `data-action="startEditAbx" data-abx="${a.id}"`
+      }>${escapeHtml(a.name)}(${escapeHtml(start)}-${escapeHtml(end)})</div>
         </div>
       `;
     })
@@ -391,7 +396,7 @@ function renderPatientItem(p, att, today, q) {
         .map(([date, notes]) => {
           const noteItems = notes
             .map((n) => {
-              const isEditing = editingNoteId === n.id;
+              const isEditing = !isViewMode && editingNoteId === n.id;
               if (isEditing) {
                 return `
                   <form class="row" data-action="editNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">
@@ -399,18 +404,15 @@ function renderPatientItem(p, att, today, q) {
                     <input name="content" value="${escapeHtml(n.content)}" autocomplete="off" required />
                     <button type="submit">儲存</button>
                     <button type="button" class="mini-ghost" data-action="cancelEditNote">取消</button>
+                    <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">刪除</button>
                   </form>
                 `;
               }
-              return `
-                <div class="row">
-                  <div class="row-main">${escapeHtml(n.content)}</div>
-                  <div class="row-actions">
-                    <button type="button" class="mini-ghost" data-action="startEditNote" data-note="${n.id}">編輯</button>
-                    <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">刪除</button>
-                  </div>
-                </div>
-              `;
+              return `<div class="row ${isViewMode ? "view-row" : ""}">
+                  <div class="row-main ${isViewMode ? "" : "clickable"}" ${
+                isViewMode ? "" : `data-action="startEditNote" data-note="${n.id}"`
+              }>${escapeHtml(n.content)}</div>
+                </div>`;
             })
             .join("");
 
@@ -418,10 +420,18 @@ function renderPatientItem(p, att, today, q) {
             <div class="note-day">
               <div class="note-day-header">
                 <div class="note-day-title">${escapeHtml(date)}</div>
-                <form class="mini-add-note" data-action="addNoteSpecificForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-date="${escapeHtml(date)}">
+                ${
+                  isViewMode
+                    ? ""
+                    : `
+                <form class="mini-add-note" data-action="addNoteSpecificForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-date="${escapeHtml(
+                        date
+                      )}">
                   <input name="content" placeholder="在此日期新增 note..." autocomplete="off" required />
                   <button type="submit">+</button>
                 </form>
+                `
+                }
               </div>
               <div class="note-day-items">${noteItems}</div>
             </div>
@@ -433,23 +443,49 @@ function renderPatientItem(p, att, today, q) {
         <div class="problem">
           <div class="problem-header">
             <div class="problem-title">${escapeHtml(pr.title || "(未命名 problem)")}</div>
-            <button type="button" class="mini-danger" data-action="delProblem" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">刪除</button>
+            ${
+              isViewMode
+                ? ""
+                : `<button type="button" class="mini-danger" data-action="delProblem" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">刪除</button>`
+            }
           </div>
           <div class="notes">
             ${notesHtml || `<div class="patient-meta">尚無 notes</div>`}
           </div>
+          ${
+            isViewMode
+              ? ""
+              : `
           <form class="inline" data-action="addNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">
             <input name="date" type="date" required />
             <input name="content" placeholder="新增 note..." autocomplete="off" required />
             <button type="submit">新增 note</button>
           </form>
+          `
+          }
         </div>
       `;
     })
     .join("");
 
+  const editActions = isViewMode
+    ? ""
+    : `
+    ${
+      editingPatientInfoId === p.id
+        ? ""
+        : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">🖊️ 編輯資料</button>`
+    }
+    ${
+      p.dischargeDate
+        ? `<button type="button" class="mini-ghost" data-action="reActivatePatient" data-att="${att.id}" data-p="${p.id}">恢復住院</button>`
+        : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">出院</button>`
+    }
+    <button type="button" class="mini-danger" data-action="delPatient" data-att="${att.id}" data-p="${p.id}">刪除病人</button>
+  `;
+
   return `
-    <article class="patient" data-att="${att.id}" data-p="${p.id}">
+    <article class="patient ${isViewMode ? "view-mode-patient" : ""}" data-att="${att.id}" data-p="${p.id}">
       <button class="patient-summary" type="button" data-action="togglePatient" data-att="${att.id}" data-p="${p.id}">
         <div class="patient-summary-left">
           <span class="patient-name">${name}</span>
@@ -463,34 +499,17 @@ function renderPatientItem(p, att, today, q) {
               : ""
           }
         </div>
-        <div class="patient-summary-right">
-          <span class="badge">${p.todos.length} todos</span>
-          <span class="badge">${(p.antibiotics || []).length} abx</span>
-          <span class="badge">${p.problems.length} problems</span>
-          <span class="chev">${isOpen ? "收合" : "展開"}</span>
-        </div>
       </button>
       ${
         isOpen
           ? `
         <div class="patient-details">
           <div class="attending-actions">
-            ${
-              editingPatientInfoId === p.id
-                ? ""
-                : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">🖊️ 編輯資料</button>`
-            }
-            ${
-              p.dischargeDate
-                ? `<button type="button" class="mini-ghost" data-action="reActivatePatient" data-att="${att.id}" data-p="${p.id}">恢復住院</button>`
-                : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">出院</button>`
-            }
-            <button type="button" class="mini-danger" data-action="delPatient" data-att="${att.id}" data-p="${p.id}">刪除病人</button>
-            <button type="button" class="mini-ghost" data-action="collapsePatient" data-att="${att.id}" data-p="${p.id}">收合</button>
+            ${editActions}
           </div>
 
           ${
-            dischargingPatientId === p.id
+            !isViewMode && dischargingPatientId === p.id
               ? `
             <form class="discharge-form" data-action="confirmDischargeForm" data-att="${att.id}" data-p="${p.id}">
               <label><span>出院日期</span><input name="date" type="date" value="${todayYmd()}" required /></label>
@@ -502,12 +521,12 @@ function renderPatientItem(p, att, today, q) {
           }
 
           ${
-            editingPatientInfoId === p.id
+            !isViewMode && editingPatientInfoId === p.id
               ? `
             <form class="two-col-form" data-action="editPatientInfoForm" data-att="${att.id}" data-p="${p.id}">
               <label><span>姓名</span><input name="name" value="${escapeHtml(p.name || "")}" required /></label>
               <label><span>床號</span><input name="bed" value="${escapeHtml(p.bed || "")}" /></label>
-              <label><span>入院日期</span><input name="admitDate" value="${escapeHtml(p.admitDate || "")}" placeholder="YYYY-MM-DD" /></label>
+              <label><span>入院日期</span><input name="admitDate" type="date" value="${escapeHtml(p.admitDate || "")}" /></label>
               <label><span>病歷號</span><input name="chartNo" value="${escapeHtml(p.chartNo || "")}" /></label>
               <label><span>性別</span><input name="sex" value="${escapeHtml(p.sex || "")}" placeholder="M/F" /></label>
               <label><span>年齡</span><input name="age" value="${escapeHtml(p.age || "")}" /></label>
@@ -520,34 +539,70 @@ function renderPatientItem(p, att, today, q) {
               : ""
           }
 
+          ${
+            p.todos.length > 0 || !isViewMode
+              ? `
           <div>
             <div class="section-title">Todos</div>
             <div class="list">${todosHtml || `<span class="patient-meta">尚無 todos</span>`}</div>
+            ${
+              isViewMode
+                ? ""
+                : `
             <form class="inline" data-action="addTodoForm" data-att="${att.id}" data-p="${p.id}">
               <input name="text" placeholder="新增 todo..." autocomplete="off" />
               <button type="submit">新增</button>
             </form>
+            `
+            }
           </div>
+          `
+              : ""
+          }
 
+          ${
+            (p.antibiotics || []).length > 0 || !isViewMode
+              ? `
           <div>
             <div class="section-title">Antibiotics</div>
             <div class="list">${abxHtml || `<span class="patient-meta">尚無 antibiotics</span>`}</div>
+            ${
+              isViewMode
+                ? ""
+                : `
             <form class="inline" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
               <input name="name" list="abxList" placeholder="選擇或輸入抗生素名稱..." autocomplete="off" />
               <input name="startDate" type="date" />
               <input name="endDate" type="date" />
               <button type="submit">新增</button>
             </form>
+            `
+            }
           </div>
+          `
+              : ""
+          }
 
+          ${
+            p.problems.length > 0 || !isViewMode
+              ? `
           <div>
             <div class="section-title">Problems</div>
             <div class="notes">${problemsHtml || `<div class="patient-meta">尚無 problems</div>`}</div>
+            ${
+              isViewMode
+                ? ""
+                : `
             <form class="inline" data-action="addProblemForm" data-att="${att.id}" data-p="${p.id}">
               <input name="title" placeholder="新增 problem title..." autocomplete="off" />
               <button type="submit">新增 problem</button>
             </form>
+            `
+            }
           </div>
+          `
+              : ""
+          }
         </div>
       `
           : ""
@@ -560,6 +615,14 @@ function render() {
   const q = normalizeSearch(searchInput.value);
   const attendings = sortAttendings(state.attendings);
   const today = todayYmd();
+
+  // Update mode toggle button text
+  const modeBtn = document.getElementById("modeToggleBtn");
+  if (modeBtn) {
+    modeBtn.textContent = isViewMode ? "🖊️ 進入編輯模式" : "👁️ 進入瀏覽模式";
+    modeBtn.style.background = isViewMode ? "transparent" : "var(--primary)";
+    modeBtn.style.color = isViewMode ? "var(--text)" : "white";
+  }
 
   if (attendings.length === 0) {
     attendingSections.innerHTML = "";
@@ -575,7 +638,14 @@ function render() {
   `;
 
   const html = datalistHtml +
-    attendings
+    [...attendings]
+      .sort((a, b) => {
+        const aHasActive = a.patients.some(p => !p.dischargeDate);
+        const bHasActive = b.patients.some(p => !p.dischargeDate);
+        if (aHasActive && !bHasActive) return -1;
+        if (!aHasActive && bHasActive) return 1;
+        return 0;
+      })
       .map((att) => {
         const attShouldShow = attendingMatchesQuery(att, q);
         const patients = sortPatients(att.patients);
@@ -597,22 +667,27 @@ function render() {
               <div class="attending-header">
                 <div class="attending-title">
                   <h3>${escapeHtml(att.name || "(未命名 attending)")}</h3>
-                  <span class="badge">${att.patients.length} patients</span>
                 </div>
                 <div class="attending-actions">
+                  ${
+                    isViewMode
+                      ? ""
+                      : `
                   <button type="button" class="mini-ghost" data-action="toggleAddPatientForm" data-att="${att.id}">
                     ${expandedAddPatientAttendingId === att.id ? "取消新增" : "新增病人"}
                   </button>
                   <button type="button" class="mini-danger" data-action="delAttending" data-att="${att.id}">刪除</button>
+                  `
+                  }
                 </div>
               </div>
 
               ${
-                expandedAddPatientAttendingId === att.id
+                !isViewMode && expandedAddPatientAttendingId === att.id
                   ? `
                 <form class="add-patient-form" data-action="addPatientForm" data-att="${att.id}">
                   <label><span>床號</span><input name="bed" autocomplete="off" placeholder="例如：12A" /></label>
-                  <label><span>入院</span><input name="admitDate" autocomplete="off" placeholder="YYYY-MM-DD" /></label>
+                  <label><span>入院</span><input name="admitDate" type="date" value="${today}" /></label>
                   <label><span>姓名</span><input name="name" autocomplete="off" required placeholder="例如：王小明" /></label>
                   <label><span>病歷號</span><input name="chartNo" autocomplete="off" placeholder="例如：123456" /></label>
                   <label><span>性別</span><input name="sex" autocomplete="off" placeholder="M/F" /></label>
@@ -634,10 +709,19 @@ function render() {
                 dischargedPatientsHtml
                   ? `
                 <div class="discharged-section">
-                  <div class="section-title">已出院病人 (${dischargedPatients.length})</div>
-                  <div class="patients">
-                    ${dischargedPatientsHtml}
-                  </div>
+                  <button class="discharged-header" data-action="toggleDischarged" data-att="${att.id}">
+                    <span class="section-title">已出院病人 (${dischargedPatients.length})</span>
+                    <span class="chev">${expandedDischargedAttendings.has(att.id) ? "收合" : "展開"}</span>
+                  </button>
+                  ${
+                    expandedDischargedAttendings.has(att.id)
+                      ? `
+                    <div class="patients">
+                      ${dischargedPatientsHtml}
+                    </div>
+                  `
+                      : ""
+                  }
                 </div>
               `
                   : ""
@@ -766,6 +850,13 @@ attendingSections.addEventListener("click", (e) => {
   if (action === "togglePatient" && attId && pId) {
     if (expandedPatients.has(pId)) expandedPatients.delete(pId);
     else expandedPatients.add(pId);
+    render();
+    return;
+  }
+
+  if (action === "toggleDischarged" && attId) {
+    if (expandedDischargedAttendings.has(attId)) expandedDischargedAttendings.delete(attId);
+    else expandedDischargedAttendings.add(attId);
     render();
     return;
   }
@@ -947,15 +1038,15 @@ attendingSections.addEventListener("submit", (e) => {
     const abxId = form.dataset.abx;
     const found = findPatient(attId, pId);
     if (!found || !found.patient || !abxId) return;
-    const item = found.patient.antibiotics.find((a) => a.id === abxId);
+    const item = (found.patient.antibiotics || []).find((a) => a.id === abxId);
     if (!item) return;
 
     const fd = new FormData(form);
     item.name = String(fd.get("name") || "").trim();
     item.startDate = String(fd.get("startDate") || "").trim();
-    found.patient.age = String(fd.get("age") || "").trim();
+    item.endDate = String(fd.get("endDate") || "").trim();
 
-    editingPatientInfoId = null;
+    editingAbxId = null;
     saveState();
     render();
     return;
@@ -1189,5 +1280,9 @@ resetBtn.addEventListener("click", () => {
   render();
 });
 
-render();
+document.getElementById("modeToggleBtn").addEventListener("click", () => {
+  isViewMode = !isViewMode;
+  render();
+});
 
+render();

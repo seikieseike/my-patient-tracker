@@ -19,6 +19,7 @@
           <p class="subtitle">資料存在本機瀏覽器（localStorage），不使用資料庫。</p>
         </div>
         <div class="topbar-actions">
+          <button class="ghost-btn" id="modeToggleBtn" type="button">👁️ 進入瀏覽模式</button>
           <button class="ghost-btn" id="exportBtn" type="button">匯出 JSON</button>
           <label class="ghost-btn file-btn">
             匯入 JSON
@@ -32,6 +33,9 @@
     <main class="container">
       <section class="panel">
         <h2>新增 attending</h2>
+        <form id="addPatientFormGlobal" class="grid-form" style="display:none;">
+          <!-- Placeholder if needed, but the real one is per attending -->
+        </form>
         <form id="addAttendingForm" class="grid-form">
           <label>
             <span>名稱</span>

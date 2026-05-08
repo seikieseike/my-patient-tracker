@@ -248,7 +248,9 @@ button:disabled {
   background: transparent;
   color: var(--danger);
   border: 1px solid rgba(239, 68, 68, 0.35);
-  padding: 8px 10px;
+  padding: 1px 4px;
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .mini-danger:hover {
@@ -259,7 +261,9 @@ button:disabled {
   background: transparent;
   color: var(--text);
   border: 1px solid rgba(203, 213, 225, 0.9);
-  padding: 8px 10px;
+  padding: 1px 4px;
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .mini-ghost:hover {
@@ -303,11 +307,11 @@ button:disabled {
   background: transparent;
   color: var(--text);
   border: none;
-  padding: 12px 14px;
+  padding: 6px 12px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* Changed from space-between */
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
   text-align: left;
 }
@@ -318,7 +322,7 @@ button:disabled {
 
 .patient-summary-left {
   display: flex;
-  gap: 10px;
+  gap: 8px; /* Reduced gap */
   flex-wrap: wrap;
   align-items: baseline;
 }
@@ -345,10 +349,10 @@ button:disabled {
 
 .patient-details {
   border-top: 1px solid rgba(203, 213, 225, 0.85);
-  padding: 12px 14px 14px;
+  padding: 8px 14px 14px;
   display: grid;
-  gap: 12px;
-  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+  gap: 6px;
+  overflow-x: hidden;
 }
 
 .two-col {
@@ -366,7 +370,7 @@ button:disabled {
 
 .section-title {
   font-weight: bold;
-  margin: 0 0 8px;
+  margin: 0 0 2px;
   font-size: 13px;
 }
 
@@ -401,23 +405,23 @@ button:disabled {
 
 .list {
   display: grid;
-  gap: 8px;
+  gap: 1px;
+  padding-left: 1.5em; /* Indent content relative to title */
 }
 
 .row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(203, 213, 225, 0.95);
-  background: #fff;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0; /* Zero vertical padding */
+  background: transparent;
+  border: none;
+  line-height: 1.2;
 }
 
 .row-main {
   flex: 1;
-  min-width: 160px;
   font-size: 13px;
   white-space: pre-wrap;
 }
@@ -441,7 +445,7 @@ button:disabled {
 }
 
 .abx-name {
-  font-weight: bold;
+  /* Removed font-weight: bold */
 }
 
 .chip.abx-active {
@@ -456,14 +460,19 @@ button:disabled {
 }
 
 .row.abx-active {
-  background: var(--abx-active-bg);
-  border-color: var(--abx-active-border);
+  background: transparent;
+  border: none;
+  padding: 0; /* Zero padding */
+  color: #16a34a; /* Green */
+  font-weight: bold;
 }
 
 .row.abx-expired {
-  background: var(--abx-expired-bg);
-  border-color: var(--abx-expired-border);
+  background: transparent;
+  border: none;
+  padding: 0; /* Zero padding */
   color: var(--muted);
+  text-decoration: none;
 }
 
 .problem {
@@ -485,18 +494,23 @@ button:disabled {
 }
 
 .notes {
-  margin-top: 8px;
+  margin-top: 4px;
   display: grid;
-  gap: 8px;
+  gap: 1px;
 }
 
 .note-day {
   display: grid;
-  gap: 8px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(203, 213, 225, 0.95);
-  background: rgba(248, 250, 252, 0.6);
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.note-day-items {
+  display: grid;
+  gap: 1px;
+  padding-left: 1.5em; /* Indent notes relative to date */
 }
 
 .note-day-title {
@@ -636,10 +650,11 @@ button:disabled {
 
   .patient-summary-right {
     width: 100%;
+    display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    padding-top: 8px;
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.8;
   }
 
   /* Prevent zoom on focus and handle narrow forms */
@@ -762,18 +777,74 @@ button:disabled {
   margin-top: 8px;
 }
 
+/* View Mode Refinements */
+.view-mode-patient .patient-summary {
+  cursor: default; /* Keep it clickable for toggle though */
+}
+
+.view-row {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.view-mode-patient .patient-details {
+  background: #fff;
+}
+
+.view-mode-patient .section-title {
+  border-bottom: 1px solid var(--soft);
+  padding-bottom: 4px;
+  color: var(--primary);
+}
+
+.view-mode-patient .problem {
+  border: none;
+  border-left: 3px solid var(--border);
+  border-radius: 0;
+  padding-left: 12px;
+  margin-bottom: 16px;
+}
+
 .discharged-section {
   margin-top: 24px;
   padding-top: 16px;
   border-top: 2px dashed var(--border);
 }
 
-.discharged-section > .section-title {
+.discharged-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.discharged-header:hover {
+  background: var(--soft);
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  width: calc(100% + 16px);
+}
+
+.discharged-header .section-title {
+  margin-bottom: 0;
   color: var(--muted);
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 12px;
+}
+
+.discharged-header .chev {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: bold;
 }
 
 .discharge-badge {
