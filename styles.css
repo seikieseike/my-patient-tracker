@@ -633,14 +633,20 @@ button:disabled {
   }
 
   .topbar-inner {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+
+  .topbar h1 {
+    font-size: 18px;
   }
 
   .topbar-actions {
-    width: 100%;
-    justify-content: flex-start;
-    margin-top: 10px;
+    width: auto;
+    margin-top: 0;
+    justify-content: flex-end;
   }
 
   .patient-summary {

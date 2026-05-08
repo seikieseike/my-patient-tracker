@@ -622,6 +622,11 @@ function render() {
     modeBtn.textContent = isViewMode ? "🖊️" : "👁️";
   }
 
+  const addAttendingSection = document.getElementById("addAttendingSection");
+  if (addAttendingSection) {
+    addAttendingSection.style.display = isViewMode ? "none" : "block";
+  }
+
   if (attendings.length === 0) {
     attendingSections.innerHTML = "";
     emptyState.hidden = false;
@@ -697,10 +702,7 @@ function render() {
               }
 
               <div class="patients">
-                ${
-                  activePatientsHtml ||
-                  `<div class="empty-state">這個 attending 目前沒有住院病人。</div>`
-                }
+                ${activePatientsHtml}
               </div>
 
               ${
