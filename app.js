@@ -619,9 +619,7 @@ function render() {
   // Update mode toggle button text
   const modeBtn = document.getElementById("modeToggleBtn");
   if (modeBtn) {
-    modeBtn.textContent = isViewMode ? "🖊️ 進入編輯模式" : "👁️ 進入瀏覽模式";
-    modeBtn.style.background = isViewMode ? "transparent" : "var(--primary)";
-    modeBtn.style.color = isViewMode ? "var(--text)" : "white";
+    modeBtn.textContent = isViewMode ? "🖊️" : "👁️";
   }
 
   if (attendings.length === 0) {

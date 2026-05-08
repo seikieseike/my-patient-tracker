@@ -16,16 +16,15 @@
       <div class="topbar-inner">
         <div>
           <h1>Patient Tracker</h1>
-          <p class="subtitle">資料存在本機瀏覽器（localStorage），不使用資料庫。</p>
         </div>
         <div class="topbar-actions">
-          <button class="ghost-btn" id="modeToggleBtn" type="button">👁️ 進入瀏覽模式</button>
-          <button class="ghost-btn" id="exportBtn" type="button">匯出 JSON</button>
-          <label class="ghost-btn file-btn">
-            匯入 JSON
+          <button class="ghost-btn icon-btn" id="modeToggleBtn" type="button" title="切換模式">👁️</button>
+          <button class="ghost-btn icon-btn" id="exportBtn" type="button" title="匯出 JSON">📤</button>
+          <label class="ghost-btn file-btn icon-btn" title="匯入 JSON">
+            📥
             <input id="importFile" type="file" accept="application/json" hidden />
           </label>
-          <button class="danger-btn" id="resetBtn" type="button">清空資料</button>
+          <button class="danger-btn icon-btn" id="resetBtn" type="button" title="清空資料">🗑️</button>
         </div>
       </div>
     </header>
