@@ -1091,19 +1091,22 @@ button:disabled {
   }
 
   .abx-edit-form .abx-inputs input[name="name"] {
-    flex: 5 !important; /* Maximized */
+    flex: 1 !important;
+    width: 100% !important;
     min-width: 0 !important;
   }
 
-  /* Hide date text, show only icon 📅 */
+  /* Dynamic width for date icons */
   .abx-edit-form .abx-inputs .date-with-icon {
-    width: 32px !important; /* Shrunk further */
+    width: auto !important;
+    min-width: 32px !important;
+    padding: 0 4px !important;
+    font-size: 11px !important;
     overflow: hidden;
-    flex: none !important;
+    flex-shrink: 0 !important;
     position: relative;
     border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 0;
+    border-radius: 4px;
     height: 32px;
     display: flex;
     align-items: center;
@@ -1168,4 +1171,71 @@ html {
 /* Prevent Tap Highlight Flicker on Mobile */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Antibiotics Addition Form - Row 2 Layout */
+.abx-add-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.abx-add-form input[name="name"] {
+  width: 100% !important;
+}
+
+.abx-add-row-2 {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.abx-add-row-2 .date-with-icon {
+  width: auto !important;
+  min-width: 32px !important;
+  padding: 0 4px !important;
+  flex-shrink: 0 !important;
+  position: relative;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  font-size: 11px;
+}
+
+.abx-add-row-2 .date-with-icon input[type="date"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.abx-add-row-2 .check-label {
+  font-size: 10px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin-left: 2px;
+}
+
+.abx-add-row-2 button {
+  flex: 1 !important;
+  height: 32px !important;
+  padding: 0 !important;
+  font-size: 11px !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+/* Specific Mobile Overrides */
+@media (max-width: 600px) {
+  .abx-add-row-2 .date-with-icon {
+    min-width: 28px !important;
+  }
 }

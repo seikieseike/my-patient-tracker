@@ -162,6 +162,13 @@ function formatDateShort(dateStr) {
   return `${m}/${d}`;
 }
 
+function formatMd(d) {
+  if (!d) return "📅";
+  const parts = d.split("-");
+  if (parts.length < 3) return "📅";
+  return `${parts[1]}/${parts[2]}`;
+}
+
 function uid(prefix) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -367,8 +374,8 @@ function renderPatientItem(p, att, today, q) {
           <form class="row abx-edit-form" data-action="editAbxForm" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">
             <div class="abx-inputs">
               <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="Select drug" />
-              <div class="date-with-icon">📅<input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" /></div>
-              <div class="date-with-icon">📅<input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" /></div>
+              <div class="date-with-icon">${formatMd(a.startDate)}<input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" /></div>
+              <div class="date-with-icon">${formatMd(a.endDate)}<input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" ${a.isOral ? "checked" : ""} /> oral</label>
             </div>
             <div class="row-actions">
@@ -593,10 +600,12 @@ function renderPatientItem(p, att, today, q) {
                 : `
             <form class="inline abx-add-form" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
               <input name="name" list="abxList" placeholder="Select drug" autocomplete="off" />
-              <div class="date-with-icon">📅<input name="startDate" type="date" /></div>
-              <div class="date-with-icon">📅<input name="endDate" type="date" /></div>
-              <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
-              <button type="submit">Add (+)</button>
+              <div class="abx-add-row-2">
+                <div class="date-with-icon">📅<input name="startDate" type="date" /></div>
+                <div class="date-with-icon">📅<input name="endDate" type="date" /></div>
+                <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
+                <button type="submit">Add (+)</button>
+              </div>
             </form>
             `
             }
