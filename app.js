@@ -7,7 +7,7 @@ const STORAGE_KEY = "patientTrackerStandaloneV1";
  * - endDate
  */
 
-/** @typedef {{ id: string, name: string, startDate: string, endDate: string }} AntibioticItem */
+/** @typedef {{ id: string, name: string, startDate: string, endDate: string, isOral?: boolean }} AntibioticItem */
 /** @typedef {{ id: string, date: string, content: string }} NoteItem */
 /** @typedef {{ id: string, title: string, notes: NoteItem[] | string[] }} Problem */
 /** @typedef {{ id: string, bed: string, admitDate: string, name: string, chartNo: string, sex: string, age: string, todos: string[], antibiotics: AntibioticItem[], problems: Problem[], dischargeDate?: string }} Patient */
@@ -35,6 +35,7 @@ const DEFAULT_ANTIBIOTICS = [
   "Flomoxef",
   "Cefoperazone/Sulbactam",
   "Sulperazon",
+  "Brosym",
   "Imipenem/Cilastatin",
   "Meropenem",
   "Ertapenem",
@@ -96,8 +97,6 @@ const emptyState = document.getElementById("emptyState");
 const addAttendingForm = document.getElementById("addAttendingForm");
 const searchInput = document.getElementById("searchInput");
 const exportBtn = document.getElementById("exportBtn");
-const importFile = document.getElementById("importFile");
-const resetBtn = document.getElementById("resetBtn");
 const jsonDialog = document.getElementById("jsonDialog");
 const jsonOutput = document.getElementById("jsonOutput");
 const copyJsonBtn = document.getElementById("copyJsonBtn");
@@ -108,8 +107,6 @@ if (
   !addAttendingForm ||
   !searchInput ||
   !exportBtn ||
-  !importFile ||
-  !resetBtn ||
   !jsonDialog ||
   !jsonOutput ||
   !copyJsonBtn
@@ -146,6 +143,9 @@ let isViewMode = true;
 
 /** @type {boolean} */
 let isAddAttendingVisible = false;
+
+/** @type {boolean} */
+let isSearchVisible = false;
 
 /** @type {Set<string>} */
 const expandedDischargedAttendings = new Set();
@@ -361,24 +361,30 @@ function renderPatientItem(p, att, today, q) {
 
       if (isEditing) {
         return `
-          <form class="row" data-action="editAbxForm" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">
-            <input name="name" list="abxList" value="${escapeHtml(a.name)}" required />
-            <input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" />
-            <input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" />
-            <button type="submit">儲存</button>
-            <button type="button" class="mini-ghost" data-action="cancelEditAbx">取消</button>
-            <button type="button" class="mini-danger" data-action="delAbxItem" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">刪除</button>
+          <form class="row abx-edit-form" data-action="editAbxForm" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">
+            <div class="abx-inputs">
+              <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="藥名" />
+              <input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" />
+              <input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" />
+              <label class="check-label"><input name="isOral" type="checkbox" ${a.isOral ? "checked" : ""} /> oral</label>
+            </div>
+            <div class="row-actions">
+              <button type="submit">儲存</button>
+              <button type="button" class="mini-ghost" data-action="cancelEditAbx">取消</button>
+              <button type="button" class="mini-danger" data-action="delAbxItem" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">刪除</button>
+            </div>
           </form>
         `;
       }
 
       const start = formatDateShort(a.startDate);
       const end = formatDateShort(a.endDate);
+      const oralTag = a.isOral ? " oral" : "";
       return `
         <div class="row ${cls}">
           <div class="row-main abx-name ${isViewMode ? "" : "clickable"}" ${
         isViewMode ? "" : `data-action="startEditAbx" data-abx="${a.id}"`
-      }>${escapeHtml(a.name)}(${escapeHtml(start)}-${escapeHtml(end)})</div>
+      }>${escapeHtml(a.name)}(${escapeHtml(start)}-${escapeHtml(end)})${oralTag}</div>
         </div>
       `;
     })
@@ -580,10 +586,11 @@ function renderPatientItem(p, att, today, q) {
               isViewMode
                 ? ""
                 : `
-            <form class="inline" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="name" list="abxList" placeholder="選擇或輸入抗生素名稱..." autocomplete="off" />
+            <form class="inline abx-add-form" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
+              <input name="name" list="abxList" placeholder="藥名..." autocomplete="off" />
               <input name="startDate" type="date" />
               <input name="endDate" type="date" />
+              <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
               <button type="submit">新增</button>
             </form>
             `
@@ -635,6 +642,11 @@ function render() {
   const addAttendingSection = document.getElementById("addAttendingSection");
   if (addAttendingSection) {
     addAttendingSection.style.display = isAddAttendingVisible ? "block" : "none";
+  }
+
+  const searchContainer = document.getElementById("searchContainer");
+  if (searchContainer) {
+    searchContainer.style.display = isSearchVisible ? "block" : "none";
   }
 
   if (attendings.length === 0) {
@@ -773,6 +785,20 @@ if (toggleAddAttendingBtn) {
   toggleAddAttendingBtn.addEventListener("click", () => {
     isAddAttendingVisible = !isAddAttendingVisible;
     render();
+  });
+}
+
+const toggleSearchBtn = document.getElementById("toggleSearchBtn");
+if (toggleSearchBtn) {
+  toggleSearchBtn.addEventListener("click", () => {
+    isSearchVisible = !isSearchVisible;
+    render();
+    if (isSearchVisible) {
+      setTimeout(() => {
+        const input = document.getElementById("searchInput");
+        if (input) input.focus();
+      }, 50);
+    }
   });
 }
 
@@ -1044,13 +1070,15 @@ attendingSections.addEventListener("submit", (e) => {
     const name = String(fd.get("name") || "").trim();
     const startDate = String(fd.get("startDate") || "").trim();
     const endDate = String(fd.get("endDate") || "").trim();
+    const isOral = fd.get("isOral") === "on";
     if (!name) return;
 
     (found.patient.antibiotics ||= []).unshift({
       id: uid("abx"),
       name,
       startDate,
-      endDate
+      endDate,
+      isOral
     });
     saveState();
     form.reset();
@@ -1070,6 +1098,7 @@ attendingSections.addEventListener("submit", (e) => {
     item.name = String(fd.get("name") || "").trim();
     item.startDate = String(fd.get("startDate") || "").trim();
     item.endDate = String(fd.get("endDate") || "").trim();
+    item.isOral = fd.get("isOral") === "on";
 
     editingAbxId = null;
     saveState();
@@ -1292,35 +1321,7 @@ pasteImportBtn.addEventListener("click", () => {
   }
 });
 
-importFile.addEventListener("change", async () => {
-  const file = importFile.files && importFile.files[0];
-  if (!file) return;
-  try {
-    const text = await file.text();
-    const parsed = JSON.parse(text);
-    if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.attendings)) {
-      alert("JSON 格式不正確：需要 { attendings: [...] }");
-      return;
-    }
-    state = { attendings: parsed.attendings };
-    expandedPatients.clear();
-    saveState();
-    render();
-  } catch {
-    alert("讀取或解析 JSON 失敗。");
-  } finally {
-    importFile.value = "";
-  }
-});
-
-resetBtn.addEventListener("click", () => {
-  const ok = confirm("確定清空所有資料？（localStorage 將被刪除）");
-  if (!ok) return;
-  localStorage.removeItem(STORAGE_KEY);
-  state = { attendings: [] };
-  expandedPatients.clear();
-  render();
-});
+// Listeners for mode toggle and search are handled elsewhere or below
 
 document.getElementById("modeToggleBtn").addEventListener("click", () => {
   isViewMode = !isViewMode;

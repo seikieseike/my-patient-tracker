@@ -18,14 +18,10 @@
           <h1>Patient list</h1>
         </div>
         <div class="topbar-actions">
+          <button class="ghost-btn icon-btn" id="toggleSearchBtn" type="button" title="搜尋">🔍</button>
           <button class="ghost-btn icon-btn" id="toggleAddAttendingBtn" type="button" title="新增 Attending">🧑‍⚕️</button>
           <button class="ghost-btn icon-btn" id="modeToggleBtn" type="button" title="切換模式">👁️</button>
           <button class="ghost-btn icon-btn" id="exportBtn" type="button" title="匯出 JSON">📤</button>
-          <label class="ghost-btn file-btn icon-btn" title="匯入 JSON">
-            📥
-            <input id="importFile" type="file" accept="application/json" hidden />
-          </label>
-          <button class="danger-btn icon-btn" id="resetBtn" type="button" title="清空資料">🗑️</button>
         </div>
       </div>
     </header>
@@ -51,7 +47,7 @@
       <section class="panel">
         <div class="panel-header">
           <h2>Seike's patients</h2>
-          <div class="panel-tools">
+          <div class="panel-tools" id="searchContainer" style="display:none;">
             <input
               id="searchInput"
               class="search"

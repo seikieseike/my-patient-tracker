@@ -895,3 +895,43 @@ button:disabled {
 .topbar-actions {
   gap: 6px !important;
 }
+
+/* Antibiotic Oral Checkbox Styling */
+.check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.abx-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  flex: 1;
+}
+
+.abx-inputs input {
+  flex: 1;
+  min-width: 80px;
+}
+
+.abx-add-form, .abx-edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+}
