@@ -486,39 +486,41 @@ function renderPatientItem(p, att, today, q) {
     ${
       editingPatientInfoId === p.id
         ? ""
-        : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">Edit</button>`
+        : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">🖊️</button>`
     }
     ${
       p.dischargeDate
         ? `<button type="button" class="mini-ghost" data-action="reActivatePatient" data-att="${att.id}" data-p="${p.id}">恢復住院</button>`
-        : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">Discharge</button>`
+        : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">🏡</button>`
     }
     <button type="button" class="mini-danger" data-action="delPatient" data-att="${att.id}" data-p="${p.id}">🗑️</button>
   `;
 
   return `
     <article class="patient ${isViewMode ? "view-mode-patient" : ""}" data-att="${att.id}" data-p="${p.id}">
-      <button class="patient-summary" type="button" data-action="togglePatient" data-att="${att.id}" data-p="${p.id}">
-        <div class="patient-summary-left">
-          <span class="patient-name">${name}</span>
-          <span class="badge">${bed}</span>
-          <span class="patient-meta">${chartNo}</span>
-          <span class="patient-meta">${formatDateShort(p.admitDate)}</span>
-          <span class="patient-meta">${sex} / ${age}</span>
-          ${
-            p.dischargeDate
-              ? `<span class="badge discharge-badge">OUT ${formatDateShort(p.dischargeDate)}</span>`
-              : ""
-          }
+      <div class="patient-header">
+        <button class="patient-summary" type="button" data-action="togglePatient" data-att="${att.id}" data-p="${p.id}">
+          <div class="patient-summary-left">
+            <span class="patient-name">${name}</span>
+            <span class="badge">${bed}</span>
+            <span class="patient-meta">${chartNo}</span>
+            <span class="patient-meta">${formatDateShort(p.admitDate)}</span>
+            <span class="patient-meta">${sex} / ${age}</span>
+            ${
+              p.dischargeDate
+                ? `<span class="badge discharge-badge">OUT ${formatDateShort(p.dischargeDate)}</span>`
+                : ""
+            }
+          </div>
+        </button>
+        <div class="patient-header-actions">
+          ${editActions}
         </div>
-      </button>
+      </div>
       ${
         isOpen
           ? `
         <div class="patient-details">
-          <div class="attending-actions">
-            ${editActions}
-          </div>
 
           ${
             !isViewMode && dischargingPatientId === p.id
@@ -713,7 +715,7 @@ function render() {
                       : `
                   <button type="button" class="mini-ghost" data-action="startEditAttending" data-att="${att.id}">🖊️</button>
                   <button type="button" class="mini-ghost" data-action="toggleAddPatientForm" data-att="${att.id}">
-                    ${expandedAddPatientAttendingId === att.id ? "Cancel Add" : "Add Patient"}
+                    ${expandedAddPatientAttendingId === att.id ? "✖️" : "➕"}
                   </button>
                   <button type="button" class="mini-danger" data-action="delAttending" data-att="${att.id}">🗑️</button>
                   `

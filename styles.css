@@ -2,10 +2,14 @@
 
 :root {
   color-scheme: light;
-  --bg: #adc1c8; /* Now Aqua Blue */
-  --panel: #f2e9d2; /* Morandi Goose Yellow */
-  --matcha: #c3cfb8; /* Morandi Matcha Green */
-  --dusty-purple: #dbd6e6; /* Now Purple */
+  --bg: #adc1c8;
+  /* Now Aqua Blue */
+  --panel: #f2e9d2;
+  /* Morandi Goose Yellow */
+  --matcha: #c3cfb8;
+  /* Morandi Matcha Green */
+  --dusty-purple: #dbd6e6;
+  /* Now Purple */
   --text: #3d3d3d;
   --muted: #6b7280;
   --border: rgba(0, 0, 0, 0.1);
@@ -249,10 +253,10 @@ button:disabled {
 }
 
 .mini-danger {
-  background: transparent;
+  background: #f1f5f9 !important;
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
   font-size: 12px;
   line-height: 1.2;
 }
@@ -262,10 +266,10 @@ button:disabled {
 }
 
 .mini-ghost {
-  background: transparent;
+  background: #f1f5f9 !important;
   color: var(--text);
-  border: 1px solid rgba(203, 213, 225, 0.9);
-  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
   font-size: 12px;
   line-height: 1.2;
 }
@@ -332,7 +336,8 @@ button:disabled {
 
 .patient-summary-left {
   display: flex;
-  gap: 8px; /* Reduced gap */
+  gap: 8px;
+  /* Reduced gap */
   flex-wrap: wrap;
   align-items: baseline;
 }
@@ -359,7 +364,8 @@ button:disabled {
 
 .patient-details {
   padding: 12px;
-  background: #efebe0; /* Ultra Light Coffee */
+  background: #efebe0;
+  /* Ultra Light Coffee */
   border-top: 1px solid var(--border);
   display: grid;
   gap: 6px;
@@ -417,7 +423,8 @@ button:disabled {
 .list {
   display: grid;
   gap: 1px;
-  padding-left: 1.5em; /* Indent content relative to title */
+  padding-left: 1.5em;
+  /* Indent content relative to title */
 }
 
 .row {
@@ -425,7 +432,8 @@ button:disabled {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  padding: 4px 0; /* Slightly larger vertical padding for edit mode */
+  padding: 4px 0;
+  /* Slightly larger vertical padding for edit mode */
   background: transparent;
   border: none;
   line-height: 1.2;
@@ -473,15 +481,18 @@ button:disabled {
 .row.abx-active {
   background: transparent;
   border: none;
-  padding: 0; /* Zero padding */
-  color: #a6635c; /* Morandi Brick Red */
+  padding: 0;
+  /* Zero padding */
+  color: #a6635c;
+  /* Morandi Brick Red */
   font-weight: bold;
 }
 
 .row.abx-expired {
   background: transparent;
   border: none;
-  padding: 0; /* Zero padding */
+  padding: 0;
+  /* Zero padding */
   color: var(--muted);
   text-decoration: none;
 }
@@ -521,7 +532,8 @@ button:disabled {
 .note-day-items {
   display: grid;
   gap: 1px;
-  padding-left: 1.5em; /* Indent notes relative to date */
+  padding-left: 1.5em;
+  /* Indent notes relative to date */
 }
 
 .note-day-title {
@@ -599,7 +611,8 @@ button:disabled {
   font-size: 14px;
 }
 
-#jsonOutput, #jsonInputArea {
+#jsonOutput,
+#jsonInputArea {
   width: 100%;
   min-height: 200px;
   margin-top: 12px;
@@ -675,8 +688,11 @@ button:disabled {
   }
 
   /* Prevent zoom on focus and handle narrow forms */
-  input, select, textarea {
-    font-size: 16px !important; /* Safari needs 16px to not zoom */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+    /* Safari needs 16px to not zoom */
   }
 
   .row {
@@ -696,7 +712,7 @@ button:disabled {
     gap: 8px;
   }
 
-  .row input[type="date"], 
+  .row input[type="date"],
   .row input:not([type="date"]) {
     width: 100%;
     min-width: 0;
@@ -712,6 +728,7 @@ button:disabled {
 .clickable {
   cursor: pointer;
 }
+
 .clickable:hover {
   color: var(--primary);
 }
@@ -796,7 +813,8 @@ button:disabled {
 
 /* View Mode Refinements */
 .view-mode-patient .patient-summary {
-  cursor: default; /* Keep it clickable for toggle though */
+  cursor: default;
+  /* Keep it clickable for toggle though */
 }
 
 .view-row {
@@ -938,7 +956,8 @@ button:disabled {
   min-width: 80px;
 }
 
-.abx-add-form, .abx-edit-form {
+.abx-add-form,
+.abx-edit-form {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -972,4 +991,42 @@ button:disabled {
   margin-top: 20px !important;
   border-top: 1px dashed var(--border);
   padding-top: 15px;
+}
+/* Patient Header with Actions */
+.patient-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--matcha);
+  width: 100%;
+}
+
+.patient-summary {
+  background: transparent !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.patient-header-actions {
+  display: flex;
+  gap: 4px;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.patient-header-actions .mini-ghost,
+.patient-header-actions .mini-danger {
+  padding: 4px 6px !important;
+  font-size: 11px !important;
+  box-shadow: none !important;
+}
+
+/* On mobile, keep info compact */
+@media (max-width: 600px) {
+  .patient-summary {
+    padding: 6px 8px !important;
+  }
+  .patient-summary-left {
+    gap: 4px !important;
+  }
 }
