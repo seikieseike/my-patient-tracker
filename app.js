@@ -331,7 +331,7 @@ function renderPatientItem(p, att, today, q) {
       const isEditing = !isViewMode && !!editingTodo && editingTodo.patientId === p.id && editingTodo.idx === idx;
       if (isEditing) {
         return `
-          <form class="row" data-action="editTodoForm" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">
+          <form class="row todo-edit-form" data-action="editTodoForm" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">
             <input name="text" value="${escapeHtml(t)}" autocomplete="off" required />
             <button type="submit">Save</button>
             <button type="button" class="mini-ghost" data-action="cancelEditTodo">Cancel</button>
@@ -411,10 +411,10 @@ function renderPatientItem(p, att, today, q) {
               const isEditing = !isViewMode && editingNoteId === n.id;
               if (isEditing) {
                 return `
-                  <form class="row" data-action="editNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">
+                  <form class="row note-edit-form" data-action="editNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">
                     <div class="date-with-icon">📅<input name="date" type="date" value="${escapeHtml(n.date || "")}" required /></div>
                     <input name="content" value="${escapeHtml(n.content)}" autocomplete="off" required />
-                    <button type="submit">Add</button>
+                    <button type="submit">Save</button>
                     <button type="button" class="mini-ghost" data-action="cancelEditNote">Cancel</button>
                     <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">🗑️</button>
                   </form>
