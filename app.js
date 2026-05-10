@@ -492,13 +492,13 @@ function renderPatientItem(p, att, today, q) {
       <button class="patient-summary" type="button" data-action="togglePatient" data-att="${att.id}" data-p="${p.id}">
         <div class="patient-summary-left">
           <span class="patient-name">${name}</span>
-          <span class="badge">床號 ${bed}</span>
-          <span class="patient-meta">病歷號 ${chartNo}</span>
-          <span class="patient-meta">入院 ${admitDate}</span>
+          <span class="badge">${bed}</span>
+          <span class="patient-meta">${chartNo}</span>
+          <span class="patient-meta">${formatDateShort(p.admitDate)}</span>
           <span class="patient-meta">${sex} / ${age}</span>
           ${
             p.dischargeDate
-              ? `<span class="badge discharge-badge">出院 ${escapeHtml(p.dischargeDate)}</span>`
+              ? `<span class="badge discharge-badge">OUT ${formatDateShort(p.dischargeDate)}</span>`
               : ""
           }
         </div>
@@ -528,11 +528,18 @@ function renderPatientItem(p, att, today, q) {
               ? `
             <form class="two-col-form" data-action="editPatientInfoForm" data-att="${att.id}" data-p="${p.id}">
               <label><span>姓名</span><input name="name" value="${escapeHtml(p.name || "")}" required /></label>
-              <label><span>床號</span><input name="bed" value="${escapeHtml(p.bed || "")}" /></label>
+              <label><span>床號</span><input name="bed" value="${escapeHtml(p.bed || "")}" inputmode="numeric" /></label>
               <label><span>入院日期</span><input name="admitDate" type="date" value="${escapeHtml(p.admitDate || "")}" /></label>
-              <label><span>病歷號</span><input name="chartNo" value="${escapeHtml(p.chartNo || "")}" /></label>
-              <label><span>性別</span><input name="sex" value="${escapeHtml(p.sex || "")}" placeholder="M/F" /></label>
-              <label><span>年齡</span><input name="age" value="${escapeHtml(p.age || "")}" /></label>
+              <label><span>病歷號</span><input name="chartNo" value="${escapeHtml(p.chartNo || "")}" inputmode="numeric" pattern="[0-9]*" /></label>
+              <label>
+                <span>性別</span>
+                <select name="sex">
+                  <option value="">-</option>
+                  <option value="M" ${p.sex === "M" ? "selected" : ""}>M</option>
+                  <option value="F" ${p.sex === "F" ? "selected" : ""}>F</option>
+                </select>
+              </label>
+              <label><span>年齡</span><input name="age" value="${escapeHtml(p.age || "")}" inputmode="numeric" pattern="[0-9]*" /></label>
               <div class="form-actions-row">
                 <button type="submit">儲存</button>
                 <button type="button" class="mini-ghost" data-action="cancelEditPatientInfo">取消</button>
@@ -692,12 +699,19 @@ function render() {
                 !isViewMode && expandedAddPatientAttendingId === att.id
                   ? `
                 <form class="add-patient-form" data-action="addPatientForm" data-att="${att.id}">
-                  <label><span>床號</span><input name="bed" autocomplete="off" placeholder="例如：12A" /></label>
+                  <label><span>床號</span><input name="bed" autocomplete="off" placeholder="例如：12A" inputmode="numeric" /></label>
                   <label><span>入院</span><input name="admitDate" type="date" value="${today}" /></label>
                   <label><span>姓名</span><input name="name" autocomplete="off" required placeholder="例如：王小明" /></label>
-                  <label><span>病歷號</span><input name="chartNo" autocomplete="off" placeholder="例如：123456" /></label>
-                  <label><span>性別</span><input name="sex" autocomplete="off" placeholder="M/F" /></label>
-                  <label><span>年齡</span><input name="age" autocomplete="off" placeholder="例如：65" /></label>
+                  <label><span>病歷號</span><input name="chartNo" autocomplete="off" placeholder="例如：123456" inputmode="numeric" pattern="[0-9]*" /></label>
+                  <label>
+                    <span>性別</span>
+                    <select name="sex">
+                      <option value="">-</option>
+                      <option value="M">M</option>
+                      <option value="F">F</option>
+                    </select>
+                  </label>
+                  <label><span>年齡</span><input name="age" autocomplete="off" placeholder="例如：65" inputmode="numeric" pattern="[0-9]*" /></label>
                   <button type="submit">確認新增</button>
                 </form>
               `
@@ -1151,6 +1165,23 @@ attendingSections.addEventListener("submit", (e) => {
     target.content = content;
     found.problem.notes = sortNotesByDate(normalized);
     editingNoteId = null;
+    saveState();
+    render();
+    return;
+  }
+
+  if (action === "editPatientInfoForm" && attId && pId) {
+    e.preventDefault();
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    const fd = new FormData(form);
+    found.patient.name = String(fd.get("name") || "").trim();
+    found.patient.bed = String(fd.get("bed") || "").trim();
+    found.patient.admitDate = String(fd.get("admitDate") || "").trim();
+    found.patient.chartNo = String(fd.get("chartNo") || "").trim();
+    found.patient.sex = String(fd.get("sex") || "").trim();
+    found.patient.age = String(fd.get("age") || "").trim();
+    editingPatientInfoId = null;
     saveState();
     render();
     return;
