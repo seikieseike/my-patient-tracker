@@ -14,8 +14,8 @@
   --danger: #ef4444;
   --danger-dark: #dc2626;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  --abx-active-bg: rgba(34, 197, 94, 0.14);
-  --abx-active-border: rgba(34, 197, 94, 0.45);
+  --abx-active-bg: rgba(75, 93, 76, 0.1);
+  --abx-active-border: rgba(75, 93, 76, 0.3);
   --abx-expired-bg: rgba(107, 114, 128, 0.12);
   --abx-expired-border: rgba(107, 114, 128, 0.35);
 }
@@ -148,7 +148,7 @@ button,
 .danger-btn {
   border: none;
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
   display: inline-flex;
@@ -252,8 +252,8 @@ button:disabled {
   background: transparent;
   color: var(--danger);
   border: 1px solid rgba(239, 68, 68, 0.35);
-  padding: 1px 4px;
-  font-size: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
@@ -265,8 +265,8 @@ button:disabled {
   background: transparent;
   color: var(--text);
   border: 1px solid rgba(203, 213, 225, 0.9);
-  padding: 1px 4px;
-  font-size: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
@@ -320,8 +320,14 @@ button:disabled {
   text-align: left;
 }
 
-.patient-summary:hover {
-  background: rgba(248, 250, 252, 0.8);
+@media (hover: hover) {
+  .patient-summary:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.patient-summary:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .patient-summary-left {
@@ -468,7 +474,7 @@ button:disabled {
   background: transparent;
   border: none;
   padding: 0; /* Zero padding */
-  color: #16a34a; /* Green */
+  color: #a6635c; /* Morandi Brick Red */
   font-weight: bold;
 }
 

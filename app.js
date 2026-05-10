@@ -333,9 +333,9 @@ function renderPatientItem(p, att, today, q) {
         return `
           <form class="row" data-action="editTodoForm" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">
             <input name="text" value="${escapeHtml(t)}" autocomplete="off" required />
-            <button type="submit">儲存</button>
-            <button type="button" class="mini-ghost" data-action="cancelEditTodo">取消</button>
-            <button type="button" class="mini-danger" data-action="delTodo" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">刪除</button>
+            <button type="submit">Save</button>
+            <button type="button" class="mini-ghost" data-action="cancelEditTodo">Cancel</button>
+            <button type="button" class="mini-danger" data-action="delTodo" data-att="${att.id}" data-p="${p.id}" data-idx="${idx}">🗑️</button>
           </form>
         `;
       }
@@ -372,9 +372,9 @@ function renderPatientItem(p, att, today, q) {
               <label class="check-label"><input name="isOral" type="checkbox" ${a.isOral ? "checked" : ""} /> oral</label>
             </div>
             <div class="row-actions">
-              <button type="submit">儲存</button>
-              <button type="button" class="mini-ghost" data-action="cancelEditAbx">取消</button>
-              <button type="button" class="mini-danger" data-action="delAbxItem" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">刪除</button>
+              <button type="submit">Save</button>
+              <button type="button" class="mini-ghost" data-action="cancelEditAbx">Cancel</button>
+              <button type="button" class="mini-danger" data-action="delAbxItem" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">🗑️</button>
             </div>
           </form>
         `;
@@ -415,8 +415,8 @@ function renderPatientItem(p, att, today, q) {
                     <div class="date-with-icon">📅<input name="date" type="date" value="${escapeHtml(n.date || "")}" required /></div>
                     <input name="content" value="${escapeHtml(n.content)}" autocomplete="off" required />
                     <button type="submit">Add</button>
-                    <button type="button" class="mini-ghost" data-action="cancelEditNote">取消</button>
-                    <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">刪除</button>
+                    <button type="button" class="mini-ghost" data-action="cancelEditNote">Cancel</button>
+                    <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">🗑️</button>
                   </form>
                 `;
               }
@@ -458,7 +458,7 @@ function renderPatientItem(p, att, today, q) {
             ${
               isViewMode
                 ? ""
-                : `<button type="button" class="mini-danger" data-action="delProblem" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">刪除</button>`
+                : `<button type="button" class="mini-danger" data-action="delProblem" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">🗑️</button>`
             }
           </div>
           <div class="notes">
@@ -471,7 +471,7 @@ function renderPatientItem(p, att, today, q) {
           <form class="inline" data-action="addNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">
             <div class="date-with-icon">📅<input name="date" type="date" required /></div>
             <input name="content" placeholder="new note" autocomplete="off" required />
-            <button type="submit">Add note</button>
+            <button type="submit">Add (+)</button>
           </form>
           `
           }
@@ -486,14 +486,14 @@ function renderPatientItem(p, att, today, q) {
     ${
       editingPatientInfoId === p.id
         ? ""
-        : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">🖊️ 編輯資料</button>`
+        : `<button type="button" class="mini-ghost" data-action="startEditPatientInfo" data-p="${p.id}">Edit</button>`
     }
     ${
       p.dischargeDate
         ? `<button type="button" class="mini-ghost" data-action="reActivatePatient" data-att="${att.id}" data-p="${p.id}">恢復住院</button>`
-        : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">出院</button>`
+        : `<button type="button" class="mini-ghost" data-action="startDischarge" data-p="${p.id}">Discharge</button>`
     }
-    <button type="button" class="mini-danger" data-action="delPatient" data-att="${att.id}" data-p="${p.id}">刪除病人</button>
+    <button type="button" class="mini-danger" data-action="delPatient" data-att="${att.id}" data-p="${p.id}">🗑️</button>
   `;
 
   return `
@@ -526,7 +526,7 @@ function renderPatientItem(p, att, today, q) {
             <form class="discharge-form" data-action="confirmDischargeForm" data-att="${att.id}" data-p="${p.id}">
               <label><span>出院日期</span><input name="date" type="date" value="${todayYmd()}" required /></label>
               <button type="submit">Confirm Discharge</button>
-              <button type="button" class="mini-ghost" data-action="cancelDischarge">取消</button>
+              <button type="button" class="mini-ghost" data-action="cancelDischarge">Cancel</button>
             </form>
           `
               : ""
@@ -550,8 +550,8 @@ function renderPatientItem(p, att, today, q) {
               </label>
               <label><span>年齡</span><input name="age" value="${escapeHtml(p.age || "")}" inputmode="numeric" pattern="[0-9]*" /></label>
               <div class="form-actions-row">
-                <button type="submit">儲存</button>
-                <button type="button" class="mini-ghost" data-action="cancelEditPatientInfo">取消</button>
+                <button type="submit">Save</button>
+                <button type="button" class="mini-ghost" data-action="cancelEditPatientInfo">Cancel</button>
               </div>
             </form>
           `
@@ -569,8 +569,8 @@ function renderPatientItem(p, att, today, q) {
                 ? ""
                 : `
             <form class="inline" data-action="addTodoForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="text" placeholder="" autocomplete="off" />
-              <button type="submit">Add</button>
+              <input name="text" placeholder="What's next?" autocomplete="off" />
+              <button type="submit">Add (+)</button>
             </form>
             `
             }
@@ -594,7 +594,7 @@ function renderPatientItem(p, att, today, q) {
               <div class="date-with-icon">📅<input name="startDate" type="date" /></div>
               <div class="date-with-icon">📅<input name="endDate" type="date" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
-              <button type="submit">Add</button>
+              <button type="submit">Add (+)</button>
             </form>
             `
             }
@@ -615,7 +615,7 @@ function renderPatientItem(p, att, today, q) {
                 : `
             <form class="inline add-diagnosis-form" data-action="addProblemForm" data-att="${att.id}" data-p="${p.id}">
               <input name="title" placeholder="New diagnosis" autocomplete="off" />
-              <button type="submit">Add</button>
+              <button type="submit">Add (+)</button>
             </form>
             `
             }
@@ -699,8 +699,8 @@ function render() {
                       ? `
                     <form class="inline-edit-att" data-action="saveAttendingNameForm" data-att="${att.id}">
                       <input name="name" value="${escapeHtml(att.name)}" autocomplete="off" required />
-                      <button type="submit">儲存</button>
-                      <button type="button" class="mini-ghost" data-action="cancelEditAttending">取消</button>
+                      <button type="submit">Save</button>
+                      <button type="button" class="mini-ghost" data-action="cancelEditAttending">Cancel</button>
                     </form>
                     `
                       : `<h3>${escapeHtml(att.name || "(未命名 attending)")}</h3>`
@@ -715,7 +715,7 @@ function render() {
                   <button type="button" class="mini-ghost" data-action="toggleAddPatientForm" data-att="${att.id}">
                     ${expandedAddPatientAttendingId === att.id ? "Cancel Add" : "Add Patient"}
                   </button>
-                  <button type="button" class="mini-danger" data-action="delAttending" data-att="${att.id}">刪除</button>
+                  <button type="button" class="mini-danger" data-action="delAttending" data-att="${att.id}">🗑️</button>
                   `
                   }
                 </div>
@@ -738,7 +738,7 @@ function render() {
                     </select>
                   </label>
                   <label><span>年齡</span><input name="age" autocomplete="off" placeholder="例如：65" inputmode="numeric" pattern="[0-9]*" /></label>
-                  <button type="submit">Add</button>
+                  <button type="submit">Add (+)</button>
                 </form>
               `
                   : ""
