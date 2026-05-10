@@ -136,6 +136,9 @@ let expandedAddPatientAttendingId = null;
 let editingPatientInfoId = null;
 
 /** @type {string | null} */
+let editingAttendingId = null;
+
+/** @type {string | null} */
 let dischargingPatientId = null;
 
 /** @type {boolean} */
@@ -363,9 +366,9 @@ function renderPatientItem(p, att, today, q) {
         return `
           <form class="row abx-edit-form" data-action="editAbxForm" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">
             <div class="abx-inputs">
-              <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="藥名" />
-              <input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" />
-              <input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" />
+              <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="select drug" />
+              <div class="date-with-icon">📅<input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" /></div>
+              <div class="date-with-icon">📅<input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" ${a.isOral ? "checked" : ""} /> oral</label>
             </div>
             <div class="row-actions">
@@ -409,9 +412,9 @@ function renderPatientItem(p, att, today, q) {
               if (isEditing) {
                 return `
                   <form class="row" data-action="editNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">
-                    <input name="date" type="date" value="${escapeHtml(n.date || "")}" required />
+                    <div class="date-with-icon">📅<input name="date" type="date" value="${escapeHtml(n.date || "")}" required /></div>
                     <input name="content" value="${escapeHtml(n.content)}" autocomplete="off" required />
-                    <button type="submit">儲存</button>
+                    <button type="submit">Add</button>
                     <button type="button" class="mini-ghost" data-action="cancelEditNote">取消</button>
                     <button type="button" class="mini-danger" data-action="delNote" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-note="${n.id}">刪除</button>
                   </form>
@@ -436,7 +439,7 @@ function renderPatientItem(p, att, today, q) {
                 <form class="mini-add-note" data-action="addNoteSpecificForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}" data-date="${escapeHtml(
                         date
                       )}">
-                  <input name="content" placeholder="在此日期新增 note..." autocomplete="off" required />
+                  <input name="content" placeholder="new notes" autocomplete="off" required />
                   <button type="submit">+</button>
                 </form>
                 `
@@ -459,16 +462,16 @@ function renderPatientItem(p, att, today, q) {
             }
           </div>
           <div class="notes">
-            ${notesHtml || `<div class="patient-meta">尚無 notes</div>`}
+            ${notesHtml || ""}
           </div>
           ${
             isViewMode
               ? ""
               : `
           <form class="inline" data-action="addNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">
-            <input name="date" type="date" required />
-            <input name="content" placeholder="新增 note..." autocomplete="off" required />
-            <button type="submit">新增 note</button>
+            <div class="date-with-icon">📅<input name="date" type="date" required /></div>
+            <input name="content" placeholder="new note" autocomplete="off" required />
+            <button type="submit">Add note</button>
           </form>
           `
           }
@@ -522,7 +525,7 @@ function renderPatientItem(p, att, today, q) {
               ? `
             <form class="discharge-form" data-action="confirmDischargeForm" data-att="${att.id}" data-p="${p.id}">
               <label><span>出院日期</span><input name="date" type="date" value="${todayYmd()}" required /></label>
-              <button type="submit">確認出院</button>
+              <button type="submit">Confirm Discharge</button>
               <button type="button" class="mini-ghost" data-action="cancelDischarge">取消</button>
             </form>
           `
@@ -559,15 +562,15 @@ function renderPatientItem(p, att, today, q) {
             p.todos.length > 0 || !isViewMode
               ? `
           <div>
-            <div class="section-title">Todos</div>
-            <div class="list">${todosHtml || `<span class="patient-meta">尚無 todos</span>`}</div>
+            <div class="section-title">To do list</div>
+            <div class="list">${todosHtml || ""}</div>
             ${
               isViewMode
                 ? ""
                 : `
             <form class="inline" data-action="addTodoForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="text" placeholder="新增 todo..." autocomplete="off" />
-              <button type="submit">新增</button>
+              <input name="text" placeholder="" autocomplete="off" />
+              <button type="submit">Add</button>
             </form>
             `
             }
@@ -581,17 +584,17 @@ function renderPatientItem(p, att, today, q) {
               ? `
           <div>
             <div class="section-title">Antibiotics</div>
-            <div class="list">${abxHtml || `<span class="patient-meta">尚無 antibiotics</span>`}</div>
+            <div class="list">${abxHtml || ""}</div>
             ${
               isViewMode
                 ? ""
                 : `
             <form class="inline abx-add-form" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="name" list="abxList" placeholder="藥名..." autocomplete="off" />
-              <input name="startDate" type="date" />
-              <input name="endDate" type="date" />
+              <input name="name" list="abxList" placeholder="select drug" autocomplete="off" />
+              <div class="date-with-icon">📅<input name="startDate" type="date" /></div>
+              <div class="date-with-icon">📅<input name="endDate" type="date" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
-              <button type="submit">新增</button>
+              <button type="submit">Add</button>
             </form>
             `
             }
@@ -604,15 +607,15 @@ function renderPatientItem(p, att, today, q) {
             p.problems.length > 0 || !isViewMode
               ? `
           <div>
-            <div class="section-title">Problems</div>
-            <div class="notes">${problemsHtml || `<div class="patient-meta">尚無 problems</div>`}</div>
+            <div class="section-title">Diagnosis</div>
+            <div class="notes">${problemsHtml || `<div class="patient-meta">no diagnosis</div>`}</div>
             ${
               isViewMode
                 ? ""
                 : `
-            <form class="inline" data-action="addProblemForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="title" placeholder="新增 problem title..." autocomplete="off" />
-              <button type="submit">新增 problem</button>
+            <form class="inline add-diagnosis-form" data-action="addProblemForm" data-att="${att.id}" data-p="${p.id}">
+              <input name="title" placeholder="New diagnosis" autocomplete="off" />
+              <button type="submit">Add</button>
             </form>
             `
             }
@@ -691,15 +694,26 @@ function render() {
             <section class="attending-card" data-att="${att.id}">
               <div class="attending-header">
                 <div class="attending-title">
-                  <h3>${escapeHtml(att.name || "(未命名 attending)")}</h3>
+                  ${
+                    !isViewMode && editingAttendingId === att.id
+                      ? `
+                    <form class="inline-edit-att" data-action="saveAttendingNameForm" data-att="${att.id}">
+                      <input name="name" value="${escapeHtml(att.name)}" autocomplete="off" required />
+                      <button type="submit">儲存</button>
+                      <button type="button" class="mini-ghost" data-action="cancelEditAttending">取消</button>
+                    </form>
+                    `
+                      : `<h3>${escapeHtml(att.name || "(未命名 attending)")}</h3>`
+                  }
                 </div>
                 <div class="attending-actions">
                   ${
                     isViewMode
                       ? ""
                       : `
+                  <button type="button" class="mini-ghost" data-action="startEditAttending" data-att="${att.id}">🖊️</button>
                   <button type="button" class="mini-ghost" data-action="toggleAddPatientForm" data-att="${att.id}">
-                    ${expandedAddPatientAttendingId === att.id ? "取消新增" : "新增病人"}
+                    ${expandedAddPatientAttendingId === att.id ? "Cancel Add" : "Add Patient"}
                   </button>
                   <button type="button" class="mini-danger" data-action="delAttending" data-att="${att.id}">刪除</button>
                   `
@@ -724,7 +738,7 @@ function render() {
                     </select>
                   </label>
                   <label><span>年齡</span><input name="age" autocomplete="off" placeholder="例如：65" inputmode="numeric" pattern="[0-9]*" /></label>
-                  <button type="submit">確認新增</button>
+                  <button type="submit">Add</button>
                 </form>
               `
                   : ""
@@ -853,6 +867,18 @@ attendingSections.addEventListener("click", (e) => {
 
   if (action === "cancelEditAbx") {
     editingAbxId = null;
+    render();
+    return;
+  }
+
+  if (action === "startEditAttending" && attId) {
+    editingAttendingId = attId;
+    render();
+    return;
+  }
+
+  if (action === "cancelEditAttending") {
+    editingAttendingId = null;
     render();
     return;
   }
@@ -1213,6 +1239,21 @@ attendingSections.addEventListener("submit", (e) => {
     editingPatientInfoId = null;
     saveState();
     render();
+    return;
+  }
+
+  if (action === "saveAttendingNameForm" && attId) {
+    e.preventDefault();
+    const attending = findAttending(attId);
+    if (!attending) return;
+    const fd = new FormData(form);
+    const name = String(fd.get("name") || "").trim();
+    if (name) {
+      attending.name = name;
+      editingAttendingId = null;
+      saveState();
+      render();
+    }
     return;
   }
 });

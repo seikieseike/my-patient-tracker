@@ -2,16 +2,18 @@
 
 :root {
   color-scheme: light;
-  --bg: #f4f7fb;
-  --panel: #ffffff;
-  --text: #111827;
+  --bg: #adc1c8; /* Now Aqua Blue */
+  --panel: #f2e9d2; /* Morandi Goose Yellow */
+  --matcha: #c3cfb8; /* Morandi Matcha Green */
+  --dusty-purple: #dbd6e6; /* Now Purple */
+  --text: #3d3d3d;
   --muted: #6b7280;
-  --border: #cbd5e1;
-  --soft: #f8fafc;
-  --primary: #2563eb;
+  --border: rgba(0, 0, 0, 0.1);
+  --soft: rgba(255, 255, 255, 0.4);
+  --primary: #8d7a6e;
   --danger: #ef4444;
   --danger-dark: #dc2626;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   --abx-active-bg: rgba(34, 197, 94, 0.14);
   --abx-active-border: rgba(34, 197, 94, 0.45);
   --abx-expired-bg: rgba(107, 114, 128, 0.12);
@@ -77,9 +79,10 @@ body {
 
 .panel {
   background: var(--panel);
-  border-radius: 12px;
+  border-radius: 20px;
+  padding: 16px;
   box-shadow: var(--shadow);
-  padding: 18px;
+  margin-bottom: 24px;
 }
 
 .panel-header {
@@ -203,8 +206,9 @@ button:disabled {
 .attending-card {
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: var(--soft);
+  background: var(--dusty-purple);
   padding: 14px;
+  margin-bottom: 16px;
 }
 
 .attending-header {
@@ -295,8 +299,8 @@ button:disabled {
   gap: 10px;
 }
 
-.patient {
-  background: #fff;
+.patient-card {
+  background: transparent;
   border: 1px solid rgba(203, 213, 225, 0.95);
   border-radius: 12px;
   overflow: hidden;
@@ -304,12 +308,12 @@ button:disabled {
 
 .patient-summary {
   width: 100%;
-  background: transparent;
+  background: var(--matcha);
   color: var(--text);
   border: none;
-  padding: 6px 12px;
+  padding: 8px 12px;
   display: flex;
-  justify-content: flex-start; /* Changed from space-between */
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   cursor: pointer;
@@ -348,8 +352,9 @@ button:disabled {
 }
 
 .patient-details {
-  border-top: 1px solid rgba(203, 213, 225, 0.85);
-  padding: 8px 14px 14px;
+  padding: 12px;
+  background: #efebe0; /* Ultra Light Coffee */
+  border-top: 1px solid var(--border);
   display: grid;
   gap: 6px;
   overflow-x: hidden;
@@ -414,7 +419,7 @@ button:disabled {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  padding: 0; /* Zero vertical padding */
+  padding: 4px 0; /* Slightly larger vertical padding for edit mode */
   background: transparent;
   border: none;
   line-height: 1.2;
@@ -795,13 +800,12 @@ button:disabled {
 }
 
 .view-mode-patient .patient-details {
-  background: #fff;
+  background: #efebe0 !important;
 }
 
 .view-mode-patient .section-title {
   border-bottom: 1px solid var(--soft);
   padding-bottom: 4px;
-  color: var(--primary);
 }
 
 .view-mode-patient .problem {
@@ -934,4 +938,32 @@ button:disabled {
   gap: 8px;
   align-items: center;
   padding: 4px 0;
+}
+
+/* Date Input with Calendar Icon */
+.date-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 8px;
+  flex: 1;
+  min-width: 110px;
+}
+
+.date-with-icon input[type="date"] {
+  border: none !important;
+  padding: 8px 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  font-size: 13px !important;
+}
+
+/* Spacing for Add Diagnosis Form */
+.add-diagnosis-form {
+  margin-top: 20px !important;
+  border-top: 1px dashed var(--border);
+  padding-top: 15px;
 }
