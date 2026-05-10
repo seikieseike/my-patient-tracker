@@ -366,7 +366,7 @@ function renderPatientItem(p, att, today, q) {
         return `
           <form class="row abx-edit-form" data-action="editAbxForm" data-att="${att.id}" data-p="${p.id}" data-abx="${a.id}">
             <div class="abx-inputs">
-              <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="select drug" />
+              <input name="name" list="abxList" value="${escapeHtml(a.name)}" required placeholder="Select drug" />
               <div class="date-with-icon">📅<input name="startDate" type="date" value="${escapeHtml(a.startDate || "")}" /></div>
               <div class="date-with-icon">📅<input name="endDate" type="date" value="${escapeHtml(a.endDate || "")}" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" ${a.isOral ? "checked" : ""} /> oral</label>
@@ -470,7 +470,7 @@ function renderPatientItem(p, att, today, q) {
               : `
           <form class="inline" data-action="addNoteForm" data-att="${att.id}" data-p="${p.id}" data-pr="${pr.id}">
             <div class="date-with-icon">📅<input name="date" type="date" required /></div>
-            <input name="content" placeholder="new note" autocomplete="off" required />
+            <input name="content" placeholder="New note" autocomplete="off" required />
             <button type="submit">Add (+)</button>
           </form>
           `
@@ -592,7 +592,7 @@ function renderPatientItem(p, att, today, q) {
                 ? ""
                 : `
             <form class="inline abx-add-form" data-action="addAbxItemForm" data-att="${att.id}" data-p="${p.id}">
-              <input name="name" list="abxList" placeholder="select drug" autocomplete="off" />
+              <input name="name" list="abxList" placeholder="Select drug" autocomplete="off" />
               <div class="date-with-icon">📅<input name="startDate" type="date" /></div>
               <div class="date-with-icon">📅<input name="endDate" type="date" /></div>
               <label class="check-label"><input name="isOral" type="checkbox" /> oral</label>
