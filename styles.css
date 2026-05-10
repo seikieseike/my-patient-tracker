@@ -1088,28 +1088,29 @@ button:disabled {
     align-items: center !important;
     gap: 4px !important;
     margin-bottom: 8px !important;
+    width: 100% !important;
   }
 
   .abx-edit-form .abx-inputs input[name="name"] {
-    flex: 10 !important;
-    width: 100% !important;
-    min-width: 80px !important; /* Fixed: ensure it is wide enough to tap */
-    height: 32px !important; /* Unified height with dates */
+    flex: 1 !important; /* Take remaining space */
+    min-width: 90px !important; /* Ensure it's never too small */
+    height: 32px !important;
     padding: 0 8px !important;
     font-size: 14px !important;
     box-sizing: border-box !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 4px !important;
+    background: #fff !important;
+    color: var(--text) !important;
   }
 
-  /* Dynamic width for date icons - optimized for drug name space */
+  /* Dynamic width for date icons - adjusted to not compress text */
   .abx-edit-form .abx-inputs .date-with-icon {
     width: auto !important;
-    min-width: 26px !important; /* Slightly wider than emoji */
-    padding: 0 2px !important;
+    min-width: 42px !important; /* Increased to fit MM/DD comfortably */
+    padding: 0 4px !important;
     font-size: 11px !important;
-    overflow: hidden;
-    flex-shrink: 0 !important;
+    flex-shrink: 0 !important; /* Don't compress me */
     position: relative;
     border: 1px solid #e2e8f0;
     border-radius: 4px;
@@ -1118,6 +1119,7 @@ button:disabled {
     align-items: center;
     justify-content: center;
     background: #fff;
+    box-sizing: border-box !important;
   }
   
   .abx-edit-form .abx-inputs .date-with-icon input[type="date"] {
