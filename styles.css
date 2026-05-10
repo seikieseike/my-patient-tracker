@@ -1091,19 +1091,19 @@ button:disabled {
   }
 
   .abx-edit-form .abx-inputs input[name="name"] {
-    flex: 3 !important; /* More space for name */
+    flex: 5 !important; /* Maximized */
     min-width: 0 !important;
   }
 
   /* Hide date text, show only icon 📅 */
   .abx-edit-form .abx-inputs .date-with-icon {
-    width: 38px !important;
+    width: 32px !important; /* Shrunk further */
     overflow: hidden;
     flex: none !important;
     position: relative;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
-    padding: 0 4px;
+    padding: 0;
     height: 32px;
     display: flex;
     align-items: center;
