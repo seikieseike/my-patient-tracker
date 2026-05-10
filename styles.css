@@ -1030,3 +1030,22 @@ button:disabled {
     gap: 4px !important;
   }
 }
+
+/* Global Background Fix for Mobile Overscroll */
+html {
+  background: var(--bg);
+}
+
+/* Straight Corners for Patient Cards (No more rounded flicker) */
+.patient-card {
+  border-radius: 0 !important;
+}
+
+.patient-header {
+  border-radius: 0 !important;
+}
+
+/* Prevent Tap Highlight Flicker on Mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
