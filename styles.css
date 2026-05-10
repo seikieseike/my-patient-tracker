@@ -1091,16 +1091,16 @@ button:disabled {
   }
 
   .abx-edit-form .abx-inputs input[name="name"] {
-    flex: 1 !important;
+    flex: 10 !important; /* Force high grow */
     width: 100% !important;
     min-width: 0 !important;
   }
 
-  /* Dynamic width for date icons */
+  /* Dynamic width for date icons - optimized for drug name space */
   .abx-edit-form .abx-inputs .date-with-icon {
     width: auto !important;
-    min-width: 32px !important;
-    padding: 0 4px !important;
+    min-width: 26px !important; /* Slightly wider than emoji */
+    padding: 0 2px !important;
     font-size: 11px !important;
     overflow: hidden;
     flex-shrink: 0 !important;
