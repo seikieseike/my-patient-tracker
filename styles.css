@@ -1091,9 +1091,15 @@ button:disabled {
   }
 
   .abx-edit-form .abx-inputs input[name="name"] {
-    flex: 10 !important; /* Force high grow */
+    flex: 10 !important;
     width: 100% !important;
-    min-width: 0 !important;
+    min-width: 80px !important; /* Fixed: ensure it is wide enough to tap */
+    height: 32px !important; /* Unified height with dates */
+    padding: 0 8px !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
   }
 
   /* Dynamic width for date icons - optimized for drug name space */
