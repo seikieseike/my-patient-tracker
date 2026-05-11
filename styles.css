@@ -422,7 +422,7 @@ button:disabled {
 
 .list {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   padding-left: 1.5em;
   /* Indent content relative to title */
 }
@@ -432,11 +432,11 @@ button:disabled {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  padding: 8px 0;
+  padding: 4px 0;
   /* Slightly larger vertical padding for edit mode */
   background: transparent;
   border: none;
-  line-height: 1.6;
+  line-height: 1.4;
 }
 
 .row-main {
@@ -820,7 +820,6 @@ button:disabled {
 .view-row {
   border: none !important;
   background: transparent !important;
-  padding: 0 !important;
 }
 
 .view-mode-patient .patient-details {
@@ -1281,4 +1280,53 @@ html {
   .abx-add-row-2 .date-with-icon {
     min-width: 28px !important;
   }
+}
+
+/* Aggressive Edit Mode Spacing Debug */
+form.row, 
+form.abx-edit-form, 
+form.abx-add-form,
+.todo-edit-form, 
+.note-edit-form {
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 2px !important; /* Minimal internal gap */
+  line-height: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+form.row input, 
+form.abx-edit-form input,
+form.abx-add-form input,
+.todo-edit-form input,
+.note-edit-form input {
+  height: 28px !important; /* Even shorter inputs */
+  padding: 2px 8px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  box-sizing: border-box !important;
+}
+
+form.row button,
+form.abx-edit-form button,
+form.abx-add-form button {
+  height: 26px !important;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+/* Ensure action rows are tight */
+.abx-add-row-2, .row-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 2px !important;
+  margin-top: 2px !important;
+}
+
+.abx-inputs {
+  gap: 2px !important;
+  margin-bottom: 2px !important;
 }
