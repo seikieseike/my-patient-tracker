@@ -1311,12 +1311,13 @@ form.abx-add-form input,
   box-sizing: border-box !important;
 }
 
-/* Mobile Edit Layout: Input top, Buttons bottom */
+/* Mobile Edit Layout: Input top, Buttons bottom (Strict Single Row for buttons) */
 .todo-edit-form, .note-edit-form {
   display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
   gap: 4px !important;
   padding: 4px 0 !important;
+  align-items: center;
 }
 
 .todo-edit-form input, 
@@ -1324,20 +1325,25 @@ form.abx-add-form input,
   grid-column: 1 / span 3 !important;
   width: 100% !important;
   height: 32px !important;
+  margin-bottom: 2px;
 }
 
-/* For notes, the date picker stays on top with the content if possible, or separate */
 .note-edit-form .date-with-icon {
-  grid-column: 1 / span 3 !important; /* Keep it on its own row or with content */
+  grid-column: 1 / span 3 !important;
   width: 100% !important;
   margin-bottom: 2px;
 }
 
 .todo-edit-form button, 
 .note-edit-form button {
-  grid-row: auto !important;
+  grid-column: auto !important; /* One column each */
   height: 28px !important;
   font-size: 11px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important; /* Strictly no wrapping */
 }
 
 .abx-inputs {
