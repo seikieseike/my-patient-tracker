@@ -1311,39 +1311,34 @@ form.abx-add-form input,
   box-sizing: border-box !important;
 }
 
-/* Mobile Edit Layout: Input top, Buttons bottom (Strict Single Row for buttons) */
-.todo-edit-form, .note-edit-form {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr 1fr !important;
+/* Force Mobile Edit Layout: Input row 1, ALL 3 buttons row 2 */
+form.row.todo-edit-form, 
+form.row.note-edit-form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
   gap: 4px !important;
   padding: 4px 0 !important;
-  align-items: center;
 }
 
-.todo-edit-form input, 
-.note-edit-form input[name="content"] {
-  grid-column: 1 / span 3 !important;
+form.row.todo-edit-form input, 
+form.row.note-edit-form input[name="content"],
+form.row.note-edit-form .date-with-icon {
+  flex: 1 1 100% !important; /* Force to take full width and wrap others */
   width: 100% !important;
   height: 32px !important;
-  margin-bottom: 2px;
+  margin-bottom: 2px !important;
 }
 
-.note-edit-form .date-with-icon {
-  grid-column: 1 / span 3 !important;
-  width: 100% !important;
-  margin-bottom: 2px;
-}
-
-.todo-edit-form button, 
-.note-edit-form button {
-  grid-column: auto !important; /* One column each */
+form.row.todo-edit-form button, 
+form.row.note-edit-form button {
+  flex: 1 !important; /* Each button takes equal part of the remaining space on next line */
+  width: auto !important;
+  min-width: 0 !important;
   height: 28px !important;
   font-size: 11px !important;
   padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important; /* Strictly no wrapping */
+  white-space: nowrap !important;
 }
 
 .abx-inputs {
