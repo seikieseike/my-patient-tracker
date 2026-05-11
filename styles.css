@@ -432,8 +432,7 @@ button:disabled {
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  padding: 4px 0;
-  /* Slightly larger vertical padding for edit mode */
+  padding: 0;
   background: transparent;
   border: none;
   line-height: 1.4;
@@ -1282,16 +1281,16 @@ html {
   }
 }
 
-/* Aggressive Edit Mode Spacing Debug */
+/* Harmonized Edit Mode Spacing - Antibiotic Standard */
 form.row, 
 form.abx-edit-form, 
 form.abx-add-form,
 .todo-edit-form, 
 .note-edit-form {
-  padding: 0 !important;
+  padding: 0 !important; /* Antibiotic Standard */
   margin: 0 !important;
-  gap: 2px !important; /* Minimal internal gap */
-  line-height: 1 !important;
+  gap: 4px !important;
+  line-height: 1.4 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -1302,17 +1301,36 @@ form.abx-edit-form input,
 form.abx-add-form input,
 .todo-edit-form input,
 .note-edit-form input {
-  height: 28px !important; /* Even shorter inputs */
-  padding: 2px 8px !important;
+  height: 32px !important; /* Slightly taller for 16px font */
+  padding: 0 8px !important;
   margin: 0 !important;
-  font-size: 13px !important;
+  font-size: 16px !important; /* Prevent iOS zoom bug */
   box-sizing: border-box !important;
+}
+
+/* For Todo and Note: allow buttons to wrap to second row */
+.todo-edit-form, .note-edit-form {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+}
+
+.todo-edit-form input, .note-edit-form input[name="content"] {
+  width: 100% !important;
+  flex: none !important;
+  margin-bottom: 2px !important;
+}
+
+.todo-edit-form button, .note-edit-form button {
+  flex: 1 !important; /* Buttons on second row spread out */
+  height: 28px !important;
+  font-size: 11px !important;
+  margin: 0 !important;
 }
 
 form.row button,
 form.abx-edit-form button,
 form.abx-add-form button {
-  height: 26px !important;
+  height: 28px !important;
   padding: 0 8px !important;
   margin: 0 !important;
   font-size: 11px !important;
