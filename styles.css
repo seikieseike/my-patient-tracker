@@ -435,7 +435,7 @@ button:disabled {
   padding: 0;
   background: transparent;
   border: none;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .row-main {
@@ -1290,21 +1290,24 @@ form.abx-add-form,
   padding: 0 !important; /* Antibiotic Standard */
   margin: 0 !important;
   gap: 4px !important;
-  line-height: 1.4 !important;
+  line-height: 1.5 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
 }
 
+/* Global Input Fix for Mobile Zoom */
+input, 
+select, 
+textarea,
 form.row input, 
 form.abx-edit-form input,
 form.abx-add-form input,
 .todo-edit-form input,
 .note-edit-form input {
-  height: 32px !important; /* Slightly taller for 16px font */
+  font-size: 16px !important; /* Force 16px to prevent any iOS zoom-in behavior */
+  height: 32px !important;
   padding: 0 8px !important;
-  margin: 0 !important;
-  font-size: 16px !important; /* Prevent iOS zoom bug */
   box-sizing: border-box !important;
 }
 
