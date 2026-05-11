@@ -1311,40 +1311,33 @@ form.abx-add-form input,
   box-sizing: border-box !important;
 }
 
-/* For Todo and Note: allow buttons to wrap to second row */
+/* Mobile Edit Layout: Input top, Buttons bottom */
 .todo-edit-form, .note-edit-form {
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 4px !important;
+  padding: 4px 0 !important;
 }
 
-.todo-edit-form input, .note-edit-form input[name="content"] {
+.todo-edit-form input, 
+.note-edit-form input[name="content"] {
+  grid-column: 1 / span 3 !important;
   width: 100% !important;
-  flex: none !important;
-  margin-bottom: 2px !important;
+  height: 32px !important;
 }
 
-.todo-edit-form button, .note-edit-form button {
-  flex: 1 !important; /* Buttons on second row spread out */
+/* For notes, the date picker stays on top with the content if possible, or separate */
+.note-edit-form .date-with-icon {
+  grid-column: 1 / span 3 !important; /* Keep it on its own row or with content */
+  width: 100% !important;
+  margin-bottom: 2px;
+}
+
+.todo-edit-form button, 
+.note-edit-form button {
+  grid-row: auto !important;
   height: 28px !important;
   font-size: 11px !important;
-  margin: 0 !important;
-}
-
-form.row button,
-form.abx-edit-form button,
-form.abx-add-form button {
-  height: 28px !important;
-  padding: 0 8px !important;
-  margin: 0 !important;
-  font-size: 11px !important;
-}
-
-/* Ensure action rows are tight */
-.abx-add-row-2, .row-actions {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 2px !important;
-  margin-top: 2px !important;
 }
 
 .abx-inputs {
