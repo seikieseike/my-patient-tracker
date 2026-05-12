@@ -10,9 +10,33 @@ const STORAGE_KEY = "patientTrackerStandaloneV1";
 /** @typedef {{ id: string, name: string, startDate: string, endDate: string, isOral?: boolean }} AntibioticItem */
 /** @typedef {{ id: string, date: string, content: string }} NoteItem */
 /** @typedef {{ id: string, title: string, notes: NoteItem[] | string[] }} Problem */
-/** @typedef {{ id: string, bed: string, admitDate: string, name: string, chartNo: string, sex: string, age: string, todos: string[], antibiotics: AntibioticItem[], problems: Problem[], dischargeDate?: string }} Patient */
+/** @typedef {{ id: string, bed: string, admitDate: string, name: string, chartNo: string, sex: string, age: string, todos: string[], status: string[], antibiotics: AntibioticItem[], problems: Problem[], dischargeDate?: string }} Patient */
 /** @typedef {{ id: string, name: string, patients: Patient[] }} Attending */
 /** @typedef {{ attendings: Attending[] }} TrackerState */
+
+const STATUS_OPTIONS = [
+  "DNR all",
+  "DNR除藥",
+  "NG",
+  "foley",
+  "CVC",
+  {
+    group: "抽血",
+    options: ["一", "二", "三", "四", "五"]
+  },
+  {
+    group: "O₂",
+    options: [
+      { type: "checkbox", value: "room air" },
+      { type: "checkbox", value: "NRM" },
+      { type: "checkbox", value: "BIPAP" },
+      { type: "checkbox", value: "呼吸器" },
+      { type: "checkbox", value: "HFNC" },
+      { type: "dropdown", value: "nasal", options: ["1L", "2L", "3L", "4L", "5L", "6L"] },
+      { type: "dropdown", value: "mask", options: ["5L", "6L", "7L", "8L"] }
+    ]
+  }
+];
 
 const DEFAULT_ANTIBIOTICS = [
   "Amoxicillin",
@@ -400,6 +424,141 @@ function renderPatientItem(p, att, today, q) {
     })
     .join("");
 
+  const statusList = p.status || [];
+  
+  // Function to process status list for view mode display
+  function processStatusForView(statusList) {
+    const processed = [];
+    const bloodDrawOptions = [];
+    const otherOptions = [];
+    const dropdownOptions = new Map();
+    
+    // Separate different types of options
+    statusList.forEach(item => {
+      if (item.startsWith('抽血 ')) {
+        bloodDrawOptions.push(item.replace('抽血 ', ''));
+      } else if (item === 'room air' || item === 'NRM' || item === 'BIPAP' || item === '呼吸器' || item === 'HFNC') {
+        // O₂ simple options
+        otherOptions.push(item);
+      } else if (item.startsWith('nasal ') || item.startsWith('mask ')) {
+        const parts = item.split(' ');
+        const group = parts[0];
+        const value = parts[1];
+        if (!dropdownOptions.has(group)) {
+          dropdownOptions.set(group, []);
+        }
+        dropdownOptions.get(group).push(value);
+      } else {
+        otherOptions.push(item);
+      }
+    });
+    
+    // Add other options first
+    otherOptions.forEach(item => {
+      processed.push(item);
+    });
+    
+    // Add blood draw as grouped item if any options are selected
+    if (bloodDrawOptions.length > 0) {
+      processed.push(`${bloodDrawOptions.join('、')}抽血`);
+    }
+    
+    // Add dropdown options
+    dropdownOptions.forEach((values, group) => {
+      if (values.length > 0) {
+        processed.push(`${group} ${values.join('、')}`);
+      }
+    });
+    
+    return processed;
+  }
+  
+  const statusHtml = isViewMode
+    ? processStatusForView(statusList)
+        .map(
+          (s) => `
+        <div class="row view-row">
+          <div class="row-main">${escapeHtml(s)}</div>
+        </div>
+      `
+        )
+        .join("")
+    : `
+      <div class="status-grid">
+        ${STATUS_OPTIONS.map(
+          (opt) => {
+            if (typeof opt === 'string') {
+              return `
+              <label class="status-opt">
+                <input type="checkbox" data-action="toggleStatus" data-p="${p.id}" data-opt="${escapeHtml(
+                  opt
+                )}" ${statusList.includes(opt) ? "checked" : ""} />
+                <span>${escapeHtml(opt)}</span>
+              </label>
+              `;
+            } else if (opt.group && opt.options) {
+              if (opt.group === 'O₂') {
+                return `
+              <div class="status-group">
+                <div class="status-group-title">${escapeHtml(opt.group)}</div>
+                <div class="status-oxygen-options">
+                  ${opt.options.map(
+                    (subOpt) => {
+                      if (subOpt.type === 'checkbox') {
+                        return `
+                        <label class="status-opt status-sub-opt">
+                          <input type="checkbox" data-action="toggleOxygenOption" data-p="${p.id}" data-opt="${escapeHtml(
+                            subOpt.value
+                          )}" ${statusList.includes(subOpt.value) ? "checked" : ""} />
+                          <span>${escapeHtml(subOpt.value)}</span>
+                        </label>
+                        `;
+                      } else if (subOpt.type === 'dropdown') {
+                        return `
+                        <div class="status-dropdown">
+                          <select class="status-select" data-action="toggleOxygenDropdown" data-p="${p.id}" data-group="${escapeHtml(subOpt.value)}">
+                            <option value="">${escapeHtml(subOpt.value)}</option>
+                            ${subOpt.options.map(
+                              (option) => `
+                                <option value="${escapeHtml(option)}" ${statusList.includes(subOpt.value + ' ' + option) ? "selected" : ""}>${escapeHtml(option)}</option>
+                                `
+                            ).join("")}
+                          </select>
+                        </div>
+                        `;
+                      }
+                      return '';
+                    }
+                  ).join("")}
+                </div>
+              </div>
+                `;
+              } else {
+                return `
+              <div class="status-group">
+                <div class="status-group-title">${escapeHtml(opt.group)}</div>
+                <div class="status-group-options">
+                  ${opt.options.map(
+                    (subOpt) => `
+                    <label class="status-opt status-sub-opt">
+                      <input type="checkbox" data-action="toggleStatus" data-p="${p.id}" data-opt="${escapeHtml(
+                        opt.group + ' ' + subOpt
+                      )}" ${statusList.includes(opt.group + ' ' + subOpt) ? "checked" : ""} />
+                      <span>${escapeHtml(subOpt)}</span>
+                    </label>
+                    `
+                  ).join("")}
+                </div>
+              </div>
+                `;
+              }
+            }
+            return '';
+          }
+        ).join("")}
+      </div>
+    `;
+
   const problemsHtml = p.problems
     .map((pr) => {
       const normalized = normalizeNotes(pr);
@@ -583,6 +742,17 @@ function renderPatientItem(p, att, today, q) {
             </form>
             `
             }
+          </div>
+          `
+              : ""
+          }
+
+          ${
+            (p.status || []).length > 0 || !isViewMode
+              ? `
+          <div class="status-section">
+            <div class="section-title">Status</div>
+            ${statusHtml || ""}
           </div>
           `
               : ""
@@ -942,6 +1112,33 @@ attendingSections.addEventListener("click", (e) => {
     return;
   }
 
+  if (action === "toggleStatus" && pId) {
+    const opt = btn.dataset.opt;
+    if (!opt) return;
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    
+    // Initialize status array if it doesn't exist
+    if (!found.patient.status) {
+      found.patient.status = [];
+    }
+    
+    const statusArray = found.patient.status;
+    const index = statusArray.indexOf(opt);
+    
+    if (index > -1) {
+      // Remove the option if it's already checked
+      statusArray.splice(index, 1);
+    } else {
+      // Add the option if it's not checked
+      statusArray.push(opt);
+    }
+    
+    saveState();
+    render();
+    return;
+  }
+
   if (action === "toggleDischarged" && attId) {
     if (expandedDischargedAttendings.has(attId)) expandedDischargedAttendings.delete(attId);
     else expandedDischargedAttendings.add(attId);
@@ -1029,6 +1226,147 @@ attendingSections.addEventListener("click", (e) => {
   }
 });
 
+// Add change event listener specifically for status checkboxes and dropdowns
+attendingSections.addEventListener("change", (e) => {
+  const target = e.target;
+  if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLSelectElement)) return;
+  
+  const action = target.dataset.action;
+  const pId = target.dataset.p;
+  const attId = target.closest("[data-att]")?.dataset.att;
+  
+  if (action === "toggleStatus" && pId && target.dataset.opt && attId) {
+    const opt = target.dataset.opt;
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    
+    // Initialize status array if it doesn't exist
+    if (!found.patient.status) {
+      found.patient.status = [];
+    }
+    
+    const statusArray = found.patient.status;
+    
+    if (target.checked) {
+      // Add option if it's checked
+      if (!statusArray.includes(opt)) {
+        statusArray.push(opt);
+      }
+    } else {
+      // Remove the option if it's unchecked
+      const index = statusArray.indexOf(opt);
+      if (index > -1) {
+        statusArray.splice(index, 1);
+      }
+    }
+    
+    saveState();
+    render();
+  }
+  
+  if (action === "toggleStatusDropdown" && pId && target.dataset.group && attId) {
+    const group = target.dataset.group;
+    const value = target.value;
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    
+    // Initialize status array if it doesn't exist
+    if (!found.patient.status) {
+      found.patient.status = [];
+    }
+    
+    const statusArray = found.patient.status;
+    
+    // Remove all existing options for this group
+    const existingOptions = statusArray.filter(item => item.startsWith(group + ' '));
+    existingOptions.forEach(existing => {
+      const index = statusArray.indexOf(existing);
+      if (index > -1) {
+        statusArray.splice(index, 1);
+      }
+    });
+    
+    // Add new selection if not empty
+    if (value) {
+      statusArray.push(`${group} ${value}`);
+    }
+    
+    saveState();
+    render();
+  }
+  
+  if (action === "toggleOxygenOption" && pId && target.dataset.opt && attId) {
+    const opt = target.dataset.opt;
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    
+    // Initialize status array if it doesn't exist
+    if (!found.patient.status) {
+      found.patient.status = [];
+    }
+    
+    const statusArray = found.patient.status;
+    
+    // Remove all O₂ related options (mutual exclusion)
+    const oxygenOptions = statusArray.filter(item => 
+      item === 'room air' || item === 'NRM' || item === 'BIPAP' || 
+      item === '呼吸器' || item === 'HFNC' || 
+      item.startsWith('nasal ') || item.startsWith('mask ')
+    );
+    
+    oxygenOptions.forEach(existing => {
+      const index = statusArray.indexOf(existing);
+      if (index > -1) {
+        statusArray.splice(index, 1);
+      }
+    });
+    
+    // Add new selection if checked
+    if (target.checked) {
+      statusArray.push(opt);
+    }
+    
+    saveState();
+    render();
+  }
+  
+  if (action === "toggleOxygenDropdown" && pId && target.dataset.group && attId) {
+    const group = target.dataset.group;
+    const value = target.value;
+    const found = findPatient(attId, pId);
+    if (!found || !found.patient) return;
+    
+    // Initialize status array if it doesn't exist
+    if (!found.patient.status) {
+      found.patient.status = [];
+    }
+    
+    const statusArray = found.patient.status;
+    
+    // Remove all O₂ related options (mutual exclusion)
+    const oxygenOptions = statusArray.filter(item => 
+      item === 'room air' || item === 'NRM' || item === 'BIPAP' || 
+      item === '呼吸器' || item === 'HFNC' || 
+      item.startsWith('nasal ') || item.startsWith('mask ')
+    );
+    
+    oxygenOptions.forEach(existing => {
+      const index = statusArray.indexOf(existing);
+      if (index > -1) {
+        statusArray.splice(index, 1);
+      }
+    });
+    
+    // Add new selection if not empty
+    if (value) {
+      statusArray.push(`${group} ${value}`);
+    }
+    
+    saveState();
+    render();
+  }
+});
+
 attendingSections.addEventListener("submit", (e) => {
   const form = e.target;
   if (!(form instanceof HTMLFormElement)) return;
@@ -1056,6 +1394,7 @@ attendingSections.addEventListener("submit", (e) => {
       sex: String(fd.get("sex") || "").trim(),
       age: String(fd.get("age") || "").trim(),
       todos: [],
+      status: [],
       antibiotics: [],
       problems: []
     };
