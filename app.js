@@ -25,6 +25,10 @@ const STATUS_OPTIONS = [
     options: ["一", "二", "三", "四", "五"]
   },
   {
+    group: "HD",
+    options: ["一", "二", "三", "四", "五", "六"]
+  },
+  {
     group: "O₂",
     options: [
       { type: "checkbox", value: "room air" },
@@ -430,6 +434,7 @@ function renderPatientItem(p, att, today, q) {
   function processStatusForView(statusList) {
     const processed = [];
     const bloodDrawOptions = [];
+    const hdOptions = [];
     const otherOptions = [];
     const dropdownOptions = new Map();
     
@@ -437,6 +442,8 @@ function renderPatientItem(p, att, today, q) {
     statusList.forEach(item => {
       if (item.startsWith('抽血 ')) {
         bloodDrawOptions.push(item.replace('抽血 ', ''));
+      } else if (item.startsWith('HD ')) {
+        hdOptions.push(item.replace('HD ', ''));
       } else if (item === 'room air' || item === 'NRM' || item === 'BIPAP' || item === '呼吸器' || item === 'HFNC') {
         // O₂ simple options
         otherOptions.push(item);
@@ -461,6 +468,11 @@ function renderPatientItem(p, att, today, q) {
     // Add blood draw as grouped item if any options are selected
     if (bloodDrawOptions.length > 0) {
       processed.push(`${bloodDrawOptions.join('、')}抽血`);
+    }
+    
+    // Add HD as grouped item if any options are selected
+    if (hdOptions.length > 0) {
+      processed.push(`HD ${hdOptions.join('、')}`);
     }
     
     // Add dropdown options
